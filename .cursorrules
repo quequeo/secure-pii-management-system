@@ -1,10 +1,12 @@
 # Cursor AI Instructions - Secure PII Management System Challenge
 
+> **Language**: All content in this file MUST be in English. Keep all instructions, comments, and documentation in English for consistency.
+
 ## Project Context
 
 This is a **take-home engineering challenge** for a job application. The goal is to build a secure PII management system with:
 
-- **Rails application** (Ruby on Rails 7.1): Web interface for collecting and displaying PII data
+- **Rails application** (Ruby on Rails 8): Web interface for collecting and displaying PII data
 - **Java microservice** (Java 17 + Spring Boot 3.2): SSN validation service per SSA standards
 
 **Working Methodology**: Small, focused PRs - each implementing a single feature with tests.
@@ -95,6 +97,67 @@ Rails form must collect:
 
 ---
 
+## PR/Branch Workflow
+
+### ✅ CHECKLIST for Every PR/Branch
+
+Before completing any PR, ensure you have:
+
+#### 1. **Tests/Specs** (MANDATORY)
+- [ ] Written RSpec tests for Rails features (models, controllers, services)
+- [ ] Written JUnit tests for Java features
+- [ ] Verified tests pass: `bundle exec rspec` or `mvn test`
+- [ ] Coverage meets >70% threshold
+- [ ] Tests include both happy paths AND error cases
+
+#### 2. **Documentation Updates** (AS NEEDED)
+Check if these files need updates:
+
+- [ ] **README.md** - Update if:
+  - New feature affects setup/installation
+  - New environment variables added
+  - New commands or endpoints created
+  - Project status/progress changes
+  - Implementation status checklist needs updating
+
+- [ ] **ARCHITECTURE.md** - Update if:
+  - New service or component added
+  - Communication pattern changes
+  - Database schema modified
+  - Security implementation changes
+
+- [ ] **.cursorrules** - Update if:
+  - New patterns or conventions established
+  - Project checklist items completed
+  - New guidelines or rules needed
+
+- [ ] **CHALLENGE.md** - ⚠️ Never modify (original requirements)
+
+- [ ] **Code comments** - Add for:
+  - Complex business logic
+  - Security-critical sections
+  - Non-obvious design decisions
+
+#### 3. **Code Quality**
+- [ ] No linter errors introduced
+- [ ] Follow Rails/Java conventions
+- [ ] Secure handling of PII data
+- [ ] No hardcoded secrets or credentials
+
+#### 4. **Commit Message**
+- [ ] Clear, descriptive message
+- [ ] Follows pattern: "Add/Update/Fix [feature/component]"
+
+### 🚫 Common Mistakes to Avoid
+
+1. **Forgetting tests** - Every PR must have tests
+2. **Not updating README** - If feature is user-facing, document it
+3. **Incomplete implementation** - Finish what you start in a PR
+4. **Multiple features in one PR** - Keep PRs focused and small
+5. **Not updating the checklist** - Mark items as complete in `.cursorrules`
+
+---
+
 ## Deliverables Checklist
 
 - [ ] Rails app with PII collection form
@@ -125,4 +188,123 @@ Check git history for completed PRs. Each PR should be focused and include:
 3. Documentation updates (if needed)
 
 When suggesting new features, consider what's already been implemented in previous PRs.
+
+---
+
+## 📊 DETAILED PROJECT CHECKLIST
+
+### ✅ COMPLETED (11 PRs)
+
+#### Infrastructure & Setup
+- [x] PR #1 - Initial repository setup (README, .gitignore, folder structure)
+- [x] PR #2 - Java Spring Boot project structure (pom.xml, application setup)
+- [x] PR #5 - Copilot instructions (documentation for AI)
+- [x] PR #9 - Dockerfile for Java service
+- [x] PR #10 - Rails 8 application with RSpec setup
+- [x] PR #11 - Challenge instructions (README + .cursorrules)
+
+#### Java Microservice - SSN Validation
+- [x] PR #3 - SSN validation DTOs (SsnValidationRequest, SsnValidationResponse)
+- [x] PR #4 - SSN validation service with SSA rules
+- [x] PR #6 - Unit tests for SSN validation (>70% coverage)
+- [x] PR #7 - SSN validation controller (REST endpoint)
+- [x] PR #8 - Health check endpoint with tests
+
+**Java Service Status**: ✅ COMPLETE with >70% test coverage
+
+---
+
+### 🚧 PENDING - Rails Application & Integration
+
+#### 1. Database & Models (Rails)
+- [ ] Configure PostgreSQL in Rails
+- [ ] Create Person or PiiRecord model with fields:
+  - first_name, middle_name, last_name
+  - ssn (encrypted)
+  - street_address_1, street_address_2
+  - city, state, zip_code
+- [ ] Configure SSN encryption (Rails encrypted attributes or attr_encrypted)
+- [ ] Migrations with indexes and constraints
+- [ ] Model validations in Rails
+- [ ] Model tests (RSpec)
+
+#### 2. PII Collection Form (Rails Views)
+- [ ] PII Controller (PeopleController or similar)
+- [ ] new.html.erb view with form including:
+  - First Name, Middle Name, Last Name
+  - Middle Name Override (checkbox)
+  - SSN (format XXX-XX-XXXX)
+  - Address fields (street 1, street 2, city, state, ZIP)
+- [ ] Styling with Tailwind CSS
+- [ ] Basic client-side validations
+- [ ] Controller tests (RSpec request specs)
+
+#### 3. Integration Rails ↔ Java
+- [ ] HTTP client service in Rails to call Java service
+- [ ] Controller integration: validate SSN before saving
+- [ ] Error handling when Java service doesn't respond
+- [ ] Integration tests (mock Java service responses)
+- [ ] Environment variable for Java service URL
+
+#### 4. Display Page (Rails Views)
+- [ ] index.html.erb view with records table
+- [ ] show.html.erb view to display individual record
+- [ ] SSN masking in helpers/presenters (***-**-1234)
+- [ ] Complete routing (routes.rb)
+- [ ] View tests (RSpec view specs or feature specs)
+
+#### 5. Docker Compose & Infrastructure
+- [ ] docker-compose.yml with:
+  - PostgreSQL service
+  - Java service
+  - Rails service
+  - Network configuration
+- [ ] Health checks in docker-compose
+- [ ] .env.example with required environment variables
+- [ ] Volumes for data persistence
+
+#### 6. Documentation
+- [ ] ARCHITECTURE.md with:
+  - Architecture diagram (ASCII art)
+  - Rails ↔ Java communication flow
+  - Database schema
+  - Security design decisions
+- [ ] Update README.md with:
+  - Quick start with Docker Compose
+  - Local setup instructions
+  - How to run tests
+  - Environment variables
+  - Assumptions and trade-offs
+  - Time tracking
+
+#### 7. Testing & Coverage
+- [ ] Verify >70% coverage in Rails (SimpleCov)
+- [ ] Encryption/decryption tests
+- [ ] SSN masking tests
+- [ ] End-to-end tests (optional with Capybara)
+
+---
+
+### 🎯 OPTIONAL - Bonus Features (if time permits)
+
+- [ ] Edit/Delete functionality for records
+- [ ] Advanced input sanitization
+- [ ] Audit logging for PII access
+- [ ] API rate limiting in Java service
+- [ ] CI/CD pipeline (GitHub Actions)
+- [ ] Hotwire/Turbo for UI updates
+
+---
+
+## 📈 General Progress
+
+**Completed**: ~40%
+- ✅ Java microservice complete (100%)
+- ✅ Rails setup (10%)
+- 🚧 Rails features (0%)
+- 🚧 Integration (0%)
+- 🚧 Docker Compose (0%)
+- 🚧 Documentation (20%)
+
+**Recommended next step**: Start with PostgreSQL configuration and Rails data model.
 
