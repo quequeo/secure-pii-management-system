@@ -27,22 +27,12 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
-    - name: Run tests with Maven
-      working-directory: java-service
-      run: mvn clean test
-
-    - name: Generate coverage report
-      working-directory: java-service
-      run: mvn jacoco:report
-
-    - name: Check test coverage
+    - name: Run tests and check coverage
       working-directory: java-service
       run: |
-        mvn jacoco:check -Drules.coverage.minimum=0.70 || {
-          echo "❌ Coverage is below 70%"
-          exit 1
-        }
-        echo "✅ Coverage meets minimum requirements (>70%)"
+        echo "🧪 Running tests and checking coverage..."
+        mvn clean verify
+        echo "✅ Tests passed and coverage meets minimum requirements (>70%)"
 
     - name: Upload coverage reports
       uses: actions/upload-artifact@v4
