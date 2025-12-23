@@ -1,12 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
+// Formats SSN input as user types: XXX-XX-XXXX
 export default class extends Controller {
-  static targets = ["input"]
-
-  connect() {
-    console.log("SSN Format controller connected")
-  }
-
   format(event) {
     let value = event.target.value.replace(/\D/g, '')
     

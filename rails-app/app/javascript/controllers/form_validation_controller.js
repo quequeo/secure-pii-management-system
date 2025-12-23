@@ -3,10 +3,6 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["field", "error"]
   
-  connect() {
-    console.log("Form validation controller connected")
-  }
-
   validate(event) {
     const field = event.target
     const errorElement = this.findErrorElement(field)

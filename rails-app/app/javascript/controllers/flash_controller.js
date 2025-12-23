@@ -4,7 +4,6 @@ export default class extends Controller {
   static values = { delay: { type: Number, default: 5000 } }
 
   connect() {
-    console.log("Flash controller connected")
     this.timeout = setTimeout(() => {
       this.dismiss()
     }, this.delayValue)
