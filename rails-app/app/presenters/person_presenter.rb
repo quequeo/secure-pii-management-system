@@ -2,7 +2,12 @@ class PersonPresenter < BasePresenter
   def masked_ssn
     return "***-**-****" if model.ssn.blank?
     
-    "***-**-#{model.ssn.split('-').last}"
+    digits = model.ssn.to_s.gsub(/\D/, "")
+    last_four = digits[-4, 4]
+    
+    return "***-**-****" if last_four.nil? || last_four.length != 4
+    
+    "***-**-#{last_four}"
   end
 
   def full_name

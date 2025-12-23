@@ -5,12 +5,32 @@ RSpec.describe PersonPresenter, type: :presenter do
   let(:presenter) { described_class.new(person) }
 
   describe "#masked_ssn" do
-    it "masks SSN showing only last 4 digits" do
+    it "masks SSN showing only last 4 digits with hyphenated format" do
+      expect(presenter.masked_ssn).to eq("***-**-6789")
+    end
+
+    it "masks SSN without hyphens (9 digits only)" do
+      person.ssn = "123456789"
+      expect(presenter.masked_ssn).to eq("***-**-6789")
+    end
+
+    it "masks SSN with mixed format" do
+      person.ssn = "12345-6789"
       expect(presenter.masked_ssn).to eq("***-**-6789")
     end
 
     it "returns all asterisks when SSN is blank" do
       person.ssn = nil
+      expect(presenter.masked_ssn).to eq("***-**-****")
+    end
+
+    it "returns all asterisks when SSN is empty string" do
+      person.ssn = ""
+      expect(presenter.masked_ssn).to eq("***-**-****")
+    end
+
+    it "returns all asterisks when SSN has insufficient digits" do
+      person.ssn = "123"
       expect(presenter.masked_ssn).to eq("***-**-****")
     end
   end
