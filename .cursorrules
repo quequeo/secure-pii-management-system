@@ -95,6 +95,67 @@ Rails form must collect:
 
 ---
 
+## PR/Branch Workflow
+
+### ✅ CHECKLIST for Every PR/Branch
+
+Before completing any PR, ensure you have:
+
+#### 1. **Tests/Specs** (MANDATORY)
+- [ ] Written RSpec tests for Rails features (models, controllers, services)
+- [ ] Written JUnit tests for Java features
+- [ ] Verified tests pass: `bundle exec rspec` or `mvn test`
+- [ ] Coverage meets >70% threshold
+- [ ] Tests include both happy paths AND error cases
+
+#### 2. **Documentation Updates** (AS NEEDED)
+Check if these files need updates:
+
+- [ ] **README.md** - Update if:
+  - New feature affects setup/installation
+  - New environment variables added
+  - New commands or endpoints created
+  - Project status/progress changes
+  - Implementation status checklist needs updating
+
+- [ ] **ARCHITECTURE.md** - Update if:
+  - New service or component added
+  - Communication pattern changes
+  - Database schema modified
+  - Security implementation changes
+
+- [ ] **.cursorrules** - Update if:
+  - New patterns or conventions established
+  - Project checklist items completed
+  - New guidelines or rules needed
+
+- [ ] **CHALLENGE.md** - ⚠️ Never modify (original requirements)
+
+- [ ] **Code comments** - Add for:
+  - Complex business logic
+  - Security-critical sections
+  - Non-obvious design decisions
+
+#### 3. **Code Quality**
+- [ ] No linter errors introduced
+- [ ] Follow Rails/Java conventions
+- [ ] Secure handling of PII data
+- [ ] No hardcoded secrets or credentials
+
+#### 4. **Commit Message**
+- [ ] Clear, descriptive message
+- [ ] Follows pattern: "Add/Update/Fix [feature/component]"
+
+### 🚫 Common Mistakes to Avoid
+
+1. **Forgetting tests** - Every PR must have tests
+2. **Not updating README** - If feature is user-facing, document it
+3. **Incomplete implementation** - Finish what you start in a PR
+4. **Multiple features in one PR** - Keep PRs focused and small
+5. **Not updating the checklist** - Mark items as complete in `.cursorrules`
+
+---
+
 ## Deliverables Checklist
 
 - [ ] Rails app with PII collection form
