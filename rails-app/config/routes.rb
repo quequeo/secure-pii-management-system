@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  resources :people, only: [:index, :new, :create, :show]
+  resources :people, only: [:index, :new, :create, :show, :edit, :update, :destroy]
   
   root "people#index"
 

@@ -1,8 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe PersonCardComponent, type: :component do
+  before do
+    allow_any_instance_of(SsnValidationService).to receive(:validate)
+      .and_return({ valid: true })
+  end
+
   let(:person) do
-    build(:person, 
+    create(:person, 
       first_name: "John", 
       middle_name: "Michael", 
       last_name: "Doe",
@@ -35,10 +40,22 @@ RSpec.describe PersonCardComponent, type: :component do
     expect(page).to have_text("#{person.city}, #{person.state}")
   end
 
-  it "displays View Details link" do
+  it "displays View icon link" do
     render_inline(described_class.new(person: presenter))
 
-    expect(page).to have_link("View Details")
+    expect(page).to have_css('a[title="View details"] i.ph-eye')
+  end
+
+  it "displays Edit icon link" do
+    render_inline(described_class.new(person: presenter))
+
+    expect(page).to have_css('a[title="Edit"] i.ph-pencil-simple')
+  end
+
+  it "displays Delete icon button" do
+    render_inline(described_class.new(person: presenter))
+
+    expect(page).to have_css('button[title="Delete"] i.ph-trash')
   end
 end
 

@@ -1,0 +1,128 @@
+<div class="max-w-2xl mx-auto p-4 md:p-6">
+  <%= turbo_frame_tag "edit_person_#{@person.id}", target: "_top" do %>
+    <div class="mb-4">
+      <%= link_to "← Back to Details", person_path(@person), data: { turbo_frame: "_top" }, class: "text-blue-600 hover:text-blue-800 text-sm font-medium" %>
+    </div>
+
+    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-6">Edit PII Record</h1>
+
+    <%= form_with model: @person, class: "space-y-6" do |form| %>
+    <% if @person.errors.any? %>
+      <div class="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4">
+        <h2 class="text-lg font-semibold mb-2"><%= pluralize(@person.errors.count, "error") %> prohibited this record from being saved:</h2>
+        <ul class="list-disc list-inside space-y-1">
+          <% @person.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="bg-white shadow rounded-lg p-6 space-y-4">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Personal Information</h2>
+      
+      <div>
+        <%= form.label :first_name, class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.text_field :first_name, 
+            required: true,
+            maxlength: 50,
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 px-3 py-2 border",
+            placeholder: "Enter first name" %>
+      </div>
+
+      <div>
+        <%= form.label :middle_name, class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.text_field :middle_name,
+            maxlength: 50,
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 px-3 py-2 border",
+            placeholder: "Enter middle name (optional)" %>
+        <div class="mt-2">
+          <%= form.check_box :middle_name_override, class: "rounded border-gray-300 text-blue-600 focus:ring-blue-500" %>
+          <%= form.label :middle_name_override, "I don't have a middle name", class: "ml-2 text-sm text-gray-600" %>
+        </div>
+      </div>
+
+      <div>
+        <%= form.label :last_name, class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.text_field :last_name,
+            required: true,
+            maxlength: 50,
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 px-3 py-2 border",
+            placeholder: "Enter last name" %>
+      </div>
+
+      <div data-controller="ssn-format">
+        <%= form.label :ssn, "Social Security Number", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <div class="bg-gray-50 border border-gray-300 rounded-md px-3 py-2 mb-2">
+          <span class="text-sm text-gray-600">Current SSN: </span>
+          <span class="font-mono text-gray-900"><%= @person.masked_ssn %></span>
+        </div>
+        <%= form.text_field :ssn,
+            required: false,
+            pattern: "\\d{3}-\\d{2}-\\d{4}",
+            data: { action: "input->ssn-format#format" },
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 px-3 py-2 border font-mono",
+            placeholder: "XXX-XX-XXXX (leave blank to keep current)" %>
+        <p class="mt-1 text-sm text-gray-500">Leave blank to keep current SSN, or enter a new one to update</p>
+      </div>
+    </div>
+
+    <div class="bg-white shadow rounded-lg p-6 space-y-4">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Address</h2>
+      
+      <div>
+        <%= form.label :street_address_1, "Street Address 1", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.text_field :street_address_1,
+            required: true,
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 px-3 py-2 border",
+            placeholder: "Enter street address" %>
+      </div>
+
+      <div>
+        <%= form.label :street_address_2, "Street Address 2 (Optional)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.text_field :street_address_2,
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 px-3 py-2 border",
+            placeholder: "Apartment, suite, etc. (optional)" %>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="md:col-span-2">
+          <%= form.label :city, class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= form.text_field :city,
+              required: true,
+              class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 px-3 py-2 border",
+              placeholder: "Enter city" %>
+        </div>
+
+        <div>
+          <%= form.label :state, class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= form.text_field :state,
+              required: true,
+              pattern: "[A-Za-z]{2}",
+              maxlength: 2,
+              class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 px-3 py-2 border uppercase",
+              placeholder: "CA" %>
+          <p class="mt-1 text-sm text-gray-500">2 letters</p>
+        </div>
+      </div>
+
+      <div class="max-w-xs">
+        <%= form.label :zip_code, "ZIP Code", class: "block text-sm font-medium text-gray-700 mb-1" %>
+        <%= form.text_field :zip_code,
+            required: true,
+            pattern: "\\d{5}",
+            maxlength: 5,
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 px-3 py-2 border font-mono",
+            placeholder: "12345" %>
+        <p class="mt-1 text-sm text-gray-500">5 digits</p>
+      </div>
+    </div>
+
+    <div class="flex gap-4">
+      <%= form.submit "Update PII Record", class: "bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow transition duration-150 ease-in-out" %>
+      <%= link_to "Cancel", person_path(@person), data: { turbo_frame: "_top" }, class: "bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-lg shadow transition duration-150 ease-in-out" %>
+    </div>
+  <% end %>
+  <% end %>
+</div>
+

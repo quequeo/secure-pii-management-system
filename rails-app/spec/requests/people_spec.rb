@@ -203,4 +203,222 @@ RSpec.describe "People", type: :request do
       expect(flash[:alert]).to eq("Person not found.")
     end
   end
+
+  describe "GET /people/:id/edit" do
+    let(:person) { create(:person) }
+
+    it "returns http success" do
+      get edit_person_path(person)
+      expect(response).to have_http_status(:success)
+    end
+
+    it "displays the edit person form" do
+      get edit_person_path(person)
+      expect(response.body).to include("Edit PII Record")
+    end
+
+    it "includes first name field with current value" do
+      get edit_person_path(person)
+      expect(response.body).to include(person.first_name)
+    end
+
+    it "displays masked SSN" do
+      person_with_ssn = create(:person, ssn: "123-45-6789")
+      get edit_person_path(person_with_ssn)
+      expect(response.body).to include("***-**-6789")
+    end
+
+    it "shows back to details link" do
+      get edit_person_path(person)
+      expect(response.body).to include("Back to Details")
+    end
+
+    it "redirects when person not found" do
+      get edit_person_path(id: 99999)
+      expect(response).to redirect_to(people_path)
+    end
+  end
+
+  describe "PATCH /people/:id" do
+    let(:person) { create(:person, first_name: "John", last_name: "Doe") }
+
+    context "with valid parameters" do
+      let(:valid_params) do
+        {
+          person: {
+            first_name: "Jane",
+            middle_name: "Marie",
+            last_name: "Smith",
+            street_address_1: "456 New St",
+            street_address_2: "",
+            city: "San Francisco",
+            state: "CA",
+            zip_code: "94102"
+          }
+        }
+      end
+
+      it "updates the person" do
+        patch person_path(person), params: valid_params
+        person.reload
+        expect(person.first_name).to eq("Jane")
+      end
+
+      it "redirects to the person show page" do
+        patch person_path(person), params: valid_params
+        expect(response).to redirect_to(person_path(person))
+      end
+
+      it "sets a success notice" do
+        patch person_path(person), params: valid_params
+        expect(flash[:notice]).to eq("Person was successfully updated.")
+      end
+
+      it "updates last name" do
+        patch person_path(person), params: valid_params
+        person.reload
+        expect(person.last_name).to eq("Smith")
+      end
+
+      it "updates city" do
+        patch person_path(person), params: valid_params
+        person.reload
+        expect(person.city).to eq("San Francisco")
+      end
+    end
+
+    context "with blank SSN" do
+      let(:params_with_blank_ssn) do
+        {
+          person: {
+            first_name: "Jane",
+            middle_name: "Marie",
+            last_name: "Smith",
+            ssn: "",
+            street_address_1: "456 New St",
+            city: "San Francisco",
+            state: "CA",
+            zip_code: "94102"
+          }
+        }
+      end
+
+      it "keeps the original SSN" do
+        original_ssn = person.ssn
+        patch person_path(person), params: params_with_blank_ssn
+        person.reload
+        expect(person.ssn).to eq(original_ssn)
+      end
+
+      it "updates other fields" do
+        patch person_path(person), params: params_with_blank_ssn
+        person.reload
+        expect(person.first_name).to eq("Jane")
+      end
+    end
+
+    context "with new SSN" do
+      let(:params_with_new_ssn) do
+        {
+          person: {
+            first_name: person.first_name,
+            middle_name: person.middle_name,
+            last_name: person.last_name,
+            ssn: "987-65-4321",
+            street_address_1: person.street_address_1,
+            city: person.city,
+            state: person.state,
+            zip_code: person.zip_code
+          }
+        }
+      end
+
+      it "updates the SSN" do
+        patch person_path(person), params: params_with_new_ssn
+        person.reload
+        expect(person.ssn).to eq("987-65-4321")
+      end
+    end
+
+    context "with invalid parameters" do
+      let(:invalid_params) do
+        {
+          person: {
+            first_name: "",
+            last_name: ""
+          }
+        }
+      end
+
+      it "does not update the person" do
+        patch person_path(person), params: invalid_params
+        person.reload
+        expect(person.first_name).to eq("John")
+      end
+
+      it "renders the edit template" do
+        patch person_path(person), params: invalid_params
+        expect(response.body).to include("Edit PII Record")
+      end
+
+      it "returns unprocessable content status" do
+        patch person_path(person), params: invalid_params
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it "displays error messages" do
+        patch person_path(person), params: invalid_params
+        expect(response.body).to include("error")
+      end
+    end
+
+    context "when person not found" do
+      it "redirects to index" do
+        patch person_path(id: 99999), params: { person: { first_name: "Test" } }
+        expect(response).to redirect_to(people_path)
+      end
+
+      it "sets alert flash" do
+        patch person_path(id: 99999), params: { person: { first_name: "Test" } }
+        expect(flash[:alert]).to eq("Person not found.")
+      end
+    end
+  end
+
+  describe "DELETE /people/:id" do
+    let!(:person) { create(:person, first_name: "John", last_name: "Doe") }
+
+    it "deletes the person" do
+      expect {
+        delete person_path(person)
+      }.to change(Person, :count).by(-1)
+    end
+
+    it "redirects to index" do
+      delete person_path(person)
+      expect(response).to redirect_to(people_path)
+    end
+
+    it "sets a success notice" do
+      delete person_path(person)
+      expect(flash[:notice]).to eq("Person was successfully deleted.")
+    end
+
+    it "returns see_other status" do
+      delete person_path(person)
+      expect(response).to have_http_status(:see_other)
+    end
+
+    context "when person not found" do
+      it "redirects to index" do
+        delete person_path(id: 99999)
+        expect(response).to redirect_to(people_path)
+      end
+
+      it "sets alert flash" do
+        delete person_path(id: 99999)
+        expect(flash[:alert]).to eq("Person not found.")
+      end
+    end
+  end
 end

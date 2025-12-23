@@ -21,7 +21,31 @@
     <%= person.formatted_created_at %>
   </td>
   <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-    <%= link_to "View Details", person, data: { turbo_frame: "_top" }, class: "text-blue-600 hover:text-blue-900 font-medium" %>
+    <div class="flex items-center justify-end gap-2">
+      <%= link_to person, 
+          data: { turbo_frame: "_top" }, 
+          class: "text-blue-600 hover:text-blue-900 transition", 
+          title: "View details", 
+          aria: { label: "View details" } do %>
+        <i class="ph ph-eye text-xl"></i>
+      <% end %>
+      <%= link_to edit_person_path(person), 
+          data: { turbo_frame: "_top" }, 
+          class: "text-green-600 hover:text-green-900 transition", 
+          title: "Edit", 
+          aria: { label: "Edit record" } do %>
+        <i class="ph ph-pencil-simple text-xl"></i>
+      <% end %>
+      <%= button_to person_path(person), 
+          method: :delete,
+          data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this record?" },
+          form: { style: "display: inline-block;" },
+          class: "text-red-600 hover:text-red-900 transition bg-transparent border-none cursor-pointer p-0",
+          title: "Delete",
+          aria: { label: "Delete record" } do %>
+        <i class="ph ph-trash text-xl"></i>
+      <% end %>
+    </div>
   </td>
 </tr>
 

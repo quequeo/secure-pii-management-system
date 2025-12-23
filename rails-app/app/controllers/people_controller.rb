@@ -1,5 +1,5 @@
 class PeopleController < ApplicationController
-  before_action :find_person, only: [:show]
+  before_action :find_person, only: [:show, :edit, :update, :destroy]
   
   rescue_from ActiveRecord::RecordNotFound, with: :person_not_found
 
@@ -22,6 +22,25 @@ class PeopleController < ApplicationController
   end
 
   def show
+  end
+
+  def edit
+  end
+
+  def update
+    update_params = person_params
+    update_params.delete(:ssn) if update_params[:ssn].blank?
+    
+    if @person.update(update_params)
+      redirect_to @person, notice: "Person was successfully updated."
+    else
+      render :edit, status: :unprocessable_content
+    end
+  end
+
+  def destroy
+    @person.destroy
+    redirect_to people_path, notice: "Person was successfully deleted.", status: :see_other
   end
 
   private
