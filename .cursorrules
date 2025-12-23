@@ -1,0 +1,128 @@
+# Cursor AI Instructions - Secure PII Management System Challenge
+
+## Project Context
+
+This is a **take-home engineering challenge** for a job application. The goal is to build a secure PII management system with:
+
+- **Rails application** (Ruby on Rails 7.1): Web interface for collecting and displaying PII data
+- **Java microservice** (Java 17 + Spring Boot 3.2): SSN validation service per SSA standards
+
+**Working Methodology**: Small, focused PRs - each implementing a single feature with tests.
+
+---
+
+## Critical Requirements to Remember
+
+### SSN Validation Rules (Java Service)
+The Java microservice must validate SSN per SSA standards:
+- Format: XXX-XX-XXXX (9 digits with dashes)
+- Area number (first 3 digits):
+  - Cannot be 000 or 666
+  - 900-999 IS VALID (used for ITINs)
+- Group number (middle 2 digits): Cannot be 00
+- Serial number (last 4 digits): Cannot be 0000
+- Must reject known invalid test SSNs:
+  - 078-05-1120 (Social Security Administration's public example)
+  - 219-09-9999 (known invalid)
+  - 457-55-5462 (known invalid)
+
+### Security Implementation
+- **At Rest**: SSN encrypted in PostgreSQL using Rails encrypted attributes
+- **In Transit**: Document HTTPS/TLS (not required for local dev)
+- **Display**: SSN masked as `***-**-1234` (only last 4 digits visible)
+- **Important**: Masking happens in Rails presentation layer, NOT in Java service
+- Java service is internal service-to-service, not exposed to end users
+
+### Architecture
+- **Monorepo structure**:
+  - `/rails-app` - Rails application
+  - `/java-service` - Java Spring Boot microservice
+- Services communicate via HTTP REST
+- Docker Compose orchestrates all services
+- PostgreSQL database
+
+### PII Form Fields
+Rails form must collect:
+- First Name (required, 1-50 chars)
+- Middle Name (required, 1-50 chars)
+- Middle Name Override (checkbox for users without middle name)
+- Last Name (required, 1-50 chars)
+- Social Security Number (required, XXX-XX-XXXX format)
+- Address:
+  - Street Address 1 (required)
+  - Street Address 2 (optional)
+  - City (required)
+  - State (required, 2-letter abbreviation)
+  - ZIP Code (required, 5 digits)
+
+### Testing Requirements
+- **Rails**: RSpec with >70% code coverage
+  - Model validations
+  - Controller/request specs
+  - Integration tests for Java service communication
+  - Test encryption/decryption
+- **Java**: JUnit 5 with >70% code coverage
+  - Unit tests for SSN validation logic
+  - API endpoint tests
+
+---
+
+## Development Guidelines
+
+### When Writing Code
+1. **Test First**: Every feature needs tests
+2. **Single Responsibility**: One PR = One feature
+3. **Security First**: Always encrypt PII, validate inputs
+4. **Documentation**: Update README/ARCHITECTURE.md when needed
+
+### Code Style
+- **Rails**: Follow standard Rails conventions, use RSpec for tests
+- **Java**: Spring Boot best practices, JUnit 5 for tests
+- **Keep it simple**: Functional over beautiful UI
+- **No React**: Use Rails views (ERB) with Tailwind CSS
+
+### Testing Strategy
+- Write tests BEFORE or ALONGSIDE implementation
+- Test both happy paths and error cases
+- Integration tests for service-to-service communication
+- Mock external service calls when appropriate
+
+### Common Patterns
+- Rails calls Java service for SSN validation before saving
+- Java service returns validation result (true/false + error message if invalid)
+- Rails encrypts SSN before storing in database
+- Display layer masks SSN when rendering views
+
+---
+
+## Deliverables Checklist
+
+- [ ] Rails app with PII collection form
+- [ ] Java microservice with SSN validation
+- [ ] PostgreSQL with encrypted SSN storage
+- [ ] Display page with masked SSNs
+- [ ] Docker Compose setup
+- [ ] Tests with >70% coverage (both services)
+- [ ] README.md with setup instructions
+- [ ] ARCHITECTURE.md with design decisions
+
+---
+
+## Important Notes
+
+- **AI Usage**: Document use of AI tools (this is encouraged!)
+- **Assumptions**: Document all assumptions in README.md
+- **Quality over Quantity**: Working, well-tested core features > broken complete implementation
+- **Time Tracking**: Keep track of time spent for self-assessment
+
+---
+
+## Current Project Status
+
+Check git history for completed PRs. Each PR should be focused and include:
+1. Implementation
+2. Tests
+3. Documentation updates (if needed)
+
+When suggesting new features, consider what's already been implemented in previous PRs.
+
