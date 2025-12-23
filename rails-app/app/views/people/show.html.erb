@@ -1,7 +1,7 @@
-<div class="max-w-3xl mx-auto p-6">
+<div class="max-w-3xl mx-auto p-4 md:p-6">
   <%= turbo_frame_tag "person_#{@person.id}", target: "_top" do %>
-    <div class="mb-6">
-      <%= link_to "← Back to List", people_path, data: { turbo_frame: "_top" }, class: "text-blue-600 hover:text-blue-800 text-sm font-medium" %>
+    <div class="mb-4 md:mb-6">
+      <%= link_to "← Back to List", people_path, data: { turbo_frame: "_top" }, class: "text-blue-600 hover:text-blue-800 text-sm md:text-base font-medium" %>
     </div>
 
   <% if flash[:notice] %>
@@ -12,9 +12,9 @@
   <% end %>
 
   <div class="bg-white shadow rounded-lg overflow-hidden">
-    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
-      <h1 class="text-2xl font-bold text-gray-900">PII Record Details</h1>
-      <p class="mt-1 text-sm text-gray-500">Created <%= @person.formatted_created_at %></p>
+    <div class="px-4 md:px-6 py-4 bg-gray-50 border-b border-gray-200">
+      <h1 class="text-xl md:text-2xl font-bold text-gray-900">PII Record Details</h1>
+      <p class="mt-1 text-xs md:text-sm text-gray-500">Created <%= @person.formatted_created_at %></p>
     </div>
 
     <div class="px-6 py-6 space-y-6">

@@ -1,6 +1,7 @@
 <%= turbo_frame_tag "people_list" do %>
   <% if people.any? %>
-    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <!-- Desktop Table View -->
+    <div class="hidden md:block bg-white shadow-md rounded-lg overflow-hidden">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
@@ -17,6 +18,44 @@
           <% end %>
         </tbody>
       </table>
+    </div>
+
+    <!-- Mobile Card View -->
+    <div class="md:hidden space-y-4">
+      <% people.each do |person| %>
+        <div class="bg-white shadow rounded-lg p-4 hover:shadow-lg transition">
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+                <span class="text-blue-600 font-semibold"><%= person.initials %></span>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-lg font-semibold text-gray-900"><%= person.full_name %></h3>
+                <p class="text-xs text-gray-500"><%= person.has_middle_name? ? "With middle name" : "No middle name" %></p>
+              </div>
+            </div>
+          </div>
+          
+          <dl class="space-y-2 text-sm">
+            <div class="flex justify-between">
+              <dt class="text-gray-500">SSN:</dt>
+              <dd class="font-mono text-gray-900"><%= person.masked_ssn %></dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="text-gray-500">Location:</dt>
+              <dd class="text-gray-900"><%= person.city %>, <%= person.state %></dd>
+            </div>
+            <div class="flex justify-between">
+              <dt class="text-gray-500">Created:</dt>
+              <dd class="text-gray-900"><%= person.created_at.strftime("%b %d, %Y") %></dd>
+            </div>
+          </dl>
+          
+          <div class="mt-4">
+            <%= link_to "View Details", person, class: "block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition" %>
+          </div>
+        </div>
+      <% end %>
     </div>
 
     <div class="mt-4 text-sm text-gray-600">
