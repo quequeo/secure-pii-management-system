@@ -40,7 +40,7 @@ This project demonstrates secure handling of sensitive PII data through:
 - **Java Service** (`/java-service`): SSN validation per SSA rules
 - **PostgreSQL**: Encrypted PII storage
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) *(coming soon)* for detailed design decisions.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed design decisions, security implementation, and system architecture.
 
 ---
 
