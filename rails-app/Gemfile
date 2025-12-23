@@ -23,6 +23,7 @@ group :development, :test do
   gem "shoulda-matchers", "~> 6.0"
   gem "webmock"
   gem "dotenv-rails"
+  gem "simplecov", require: false
 end
 
 group :development do
