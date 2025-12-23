@@ -1,8 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["field", "error"]
-  
   validate(event) {
     const field = event.target
     const errorElement = this.findErrorElement(field)
