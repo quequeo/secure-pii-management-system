@@ -1,0 +1,83 @@
+<div class="max-w-7xl mx-auto p-4 md:p-6">
+  <div class="mb-6">
+    <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
+      <%= link_to "Audit Logs", audit_logs_path, class: "hover:text-gray-700", data: { turbo_frame: "_top" } %>
+      <span>/</span>
+      <span><%= @person.full_name %></span>
+    </div>
+    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Audit History</h1>
+    <p class="text-gray-600">Access and modification logs for <%= @person.full_name %></p>
+  </div>
+
+  <!-- Person Info Card -->
+  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+    <div class="flex items-start gap-3">
+      <div class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-lg">
+        <%= @person.initials %>
+      </div>
+      <div>
+        <div class="font-medium text-gray-900"><%= @person.full_name %></div>
+        <div class="text-sm text-gray-600">Person #<%= @person.id %></div>
+        <div class="text-sm text-gray-600">SSN: <%= @person.masked_ssn %></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audit Logs -->
+  <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    <% if @audit_logs.any? %>
+      <div class="divide-y divide-gray-200">
+        <% @audit_logs.each do |log| %>
+          <div class="p-4 hover:bg-gray-50 transition">
+            <div class="flex items-start justify-between mb-2">
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                <%= case log.action
+                    when 'view' then 'bg-blue-100 text-blue-800'
+                    when 'create' then 'bg-green-100 text-green-800'
+                    when 'update' then 'bg-yellow-100 text-yellow-800'
+                    when 'destroy' then 'bg-red-100 text-red-800'
+                    end %>">
+                <%= log.action.capitalize %>
+              </span>
+              <span class="text-xs text-gray-500"><%= time_ago_in_words(log.created_at) %> ago</span>
+            </div>
+            <div class="text-sm text-gray-900 font-medium mb-2"><%= log.details %></div>
+            <div class="text-xs text-gray-500 space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="font-medium">User:</span>
+                <span><%= log.user_identifier || 'Anonymous' %></span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="font-medium">IP:</span>
+                <span class="font-mono"><%= log.ip_address || 'N/A' %></span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="font-medium">Time:</span>
+                <span><%= log.formatted_created_at %></span>
+              </div>
+              <% if log.user_agent.present? %>
+                <div class="flex items-start gap-2">
+                  <span class="font-medium">Device:</span>
+                  <span class="text-xs"><%= log.short_user_agent %></span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-12">
+        <i class="ph ph-clipboard-text text-6xl text-gray-300 mb-4"></i>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No Audit Logs</h3>
+        <p class="text-gray-500">No activity has been recorded for this person yet</p>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-6">
+    <%= link_to "← Back to All Logs", audit_logs_path, 
+        class: "text-blue-600 hover:text-blue-700 font-medium", 
+        data: { turbo_frame: "_top" } %>
+  </div>
+</div>
+
