@@ -180,6 +180,45 @@ Coverage breakdown:
 
 ---
 
+## 🎨 Frontend Architecture
+
+This project uses a **modern Rails frontend stack** with Hotwire for SPA-like interactions:
+
+### Technologies
+- **Hotwire Turbo**: SPA-like navigation without full page reloads
+- **Turbo Frames**: Scoped updates for specific page sections
+- **Stimulus**: Lightweight JavaScript controllers for interactivity
+- **ViewComponents**: Reusable, testable UI components
+- **Presenters**: Separation of presentation logic from models
+- **Tailwind CSS**: Utility-first CSS framework
+- **Importmaps**: No build step required for JavaScript
+
+### Key Features
+- **SSN Auto-formatting**: Automatically adds dashes as user types (`123456789` → `123-45-6789`)
+- **Client-side Validation**: Real-time form validation with visual feedback
+- **Auto-dismissing Flash Messages**: Success/error messages fade after 5 seconds
+- **Mobile Menu**: Responsive navigation with hamburger menu
+- **Turbo Frame Navigation**: Seamless transitions between list and detail views
+- **Responsive Design**: Mobile-first with separate desktop/mobile layouts
+
+### Components
+- **ButtonComponent**: Reusable button/link with variants (primary, secondary, danger)
+- **PersonCardComponent**: Display person record in table row
+- **EmptyStateComponent**: Empty state with icon and action button
+- **FormFieldComponent**: Form field with label, hint, and error messages
+
+### Presenters
+- **BasePresenter**: Foundation for all presenters with view context access
+- **PersonPresenter**: Encapsulates Person presentation logic (masked SSN, formatted dates, initials, etc.)
+
+### Stimulus Controllers
+- **ssn_format_controller.js**: Auto-format SSN input with dashes
+- **form_validation_controller.js**: Client-side form validation
+- **flash_controller.js**: Auto-dismiss flash messages
+- **mobile_menu_controller.js**: Toggle mobile navigation menu
+
+---
+
 ## 🔒 Security Features
 
 ### Encryption at Rest
@@ -222,11 +261,21 @@ secure-pii-management-system/
 │
 ├── rails-app/                 # Rails 8 application
 │   ├── app/
-│   │   ├── controllers/       # Request handling
-│   │   ├── models/            # Data models (with encryption)
-│   │   ├── views/             # ERB templates
-│   │   └── helpers/           # View helpers (SSN masking)
-│   ├── spec/                  # RSpec tests
+│   │   ├── controllers/       # Request handling (PeopleController)
+│   │   ├── models/            # Data models (Person with encryption)
+│   │   ├── views/             # ERB templates with Turbo Frames
+│   │   ├── components/        # ViewComponents (ButtonComponent, PersonCardComponent, etc.)
+│   │   ├── presenters/        # Presentation logic (BasePresenter, PersonPresenter)
+│   │   ├── services/          # Business logic (SsnValidationService)
+│   │   └── javascript/
+│   │       ├── controllers/   # Stimulus controllers (SSN format, form validation, etc.)
+│   │       └── application.js # Hotwire initialization
+│   ├── spec/                  # RSpec tests (100% coverage)
+│   │   ├── models/
+│   │   ├── requests/
+│   │   ├── services/
+│   │   ├── presenters/
+│   │   └── components/        # ViewComponent tests
 │   ├── Dockerfile
 │   └── Gemfile
 │
@@ -276,11 +325,19 @@ secure-pii-management-system/
 - [x] .cursorrules (AI coding guidelines)
 - [x] Inline code documentation
 
-### Bonus Features (Optional)
+### Bonus Features
+**Completed ✅:**
+- [x] CI/CD Pipeline (GitHub Actions) - 3 workflows
+- [x] Hotwire/Turbo - SPA-like navigation with Turbo Frames
+- [x] ViewComponents - Reusable UI components
+- [x] Presenter Pattern - Separation of presentation logic
+- [x] Stimulus Controllers - Interactive UI features
+- [x] Responsive Design - Mobile-first approach
+
+**Pending (Optional):**
 - [ ] Edit/Delete functionality
 - [ ] Audit logging for PII access
 - [ ] Rate limiting on Java service
-- [ ] Hotwire/Turbo for dynamic UI
 
 See [.cursorrules](.cursorrules) for detailed checklist.
 
