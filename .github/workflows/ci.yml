@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  docker-compose:
+    name: Docker Compose Build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Docker images
+      run: docker-compose build
+
+    - name: Verify docker-compose configuration
+      run: docker-compose config
+
+  security-check:
+    name: Security Checks
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Check for secrets in code
+      run: |
+        echo "🔍 Checking for potential secrets..."
+        ! grep -r "password.*=.*['\"].*['\"]" --include="*.rb" --include="*.yml" rails-app/ || {
+          echo "⚠️  Warning: Found hardcoded passwords"
+          exit 1
+        }
+        echo "✅ No hardcoded secrets found"
+
+    - name: Verify .gitignore patterns
+      run: |
+        echo "🔍 Checking .gitignore configuration..."
+        if ! grep -q "\.env" .gitignore rails-app/.gitignore; then
+          echo "❌ .env files not properly ignored"
+          exit 1
+        fi
+        if ! grep -q "coverage" rails-app/.gitignore; then
+          echo "❌ coverage directory not ignored"
+          exit 1
+        fi
+        echo "✅ .gitignore properly configured"
+
+  documentation:
+    name: Documentation Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Check required documentation files
+      run: |
+        echo "📚 Checking documentation..."
+        required_files=("README.md" "ARCHITECTURE.md" "CHALLENGE.md")
+        for file in "${required_files[@]}"; do
+          if [ ! -f "$file" ]; then
+            echo "❌ Missing required file: $file"
+            exit 1
+          fi
+          echo "✅ Found: $file"
+        done
+
+    - name: Verify README completeness
+      run: |
+        echo "📝 Checking README completeness..."
+        required_sections=("Quick Start" "Architecture" "Testing" "Security")
+        for section in "${required_sections[@]}"; do
+          if ! grep -q "$section" README.md; then
+            echo "⚠️  Warning: README might be missing section: $section"
+          fi
+        done
+        echo "✅ README appears complete"
+

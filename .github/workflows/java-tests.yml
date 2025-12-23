@@ -1,0 +1,52 @@
+name: Java Tests
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'java-service/**'
+      - '.github/workflows/java-tests.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'java-service/**'
+      - '.github/workflows/java-tests.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Run tests with Maven
+      working-directory: java-service
+      run: mvn clean test
+
+    - name: Generate coverage report
+      working-directory: java-service
+      run: mvn jacoco:report
+
+    - name: Check test coverage
+      working-directory: java-service
+      run: |
+        mvn jacoco:check -Drules.coverage.minimum=0.70 || {
+          echo "❌ Coverage is below 70%"
+          exit 1
+        }
+        echo "✅ Coverage meets minimum requirements (>70%)"
+
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: java-coverage-report
+        path: java-service/target/site/jacoco/
+
