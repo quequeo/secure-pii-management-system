@@ -1,6 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe Person, type: :model do
+  before do
+    allow_any_instance_of(SsnValidationService).to receive(:validate)
+      .and_return({ valid: true })
+  end
+
   describe "validations" do
     subject { build(:person) }
 
@@ -181,6 +186,52 @@ RSpec.describe Person, type: :model do
     it "returns full name with blank middle name" do
       person = build(:person, first_name: "John", middle_name: "", last_name: "Doe")
       expect(person.full_name).to eq("John Doe")
+    end
+  end
+
+  describe "SSN validation with Java service" do
+    let(:person) { build(:person, ssn: "123-45-6789") }
+    let(:validation_service) { instance_double(SsnValidationService) }
+
+    before do
+      allow(SsnValidationService).to receive(:new).and_return(validation_service)
+    end
+
+    context "when Java service returns valid" do
+      it "saves the person successfully" do
+        allow(validation_service).to receive(:validate).and_return({ valid: true })
+        
+        expect(person.valid?).to be true
+      end
+    end
+
+    context "when Java service returns invalid" do
+      it "adds error to SSN field" do
+        allow(validation_service).to receive(:validate)
+          .and_return({ valid: false, error: "Area number cannot be 000" })
+        
+        person.valid?
+        expect(person.errors[:ssn]).to include("Area number cannot be 000")
+      end
+    end
+
+    context "when Java service is unavailable" do
+      it "adds error to base" do
+        allow(validation_service).to receive(:validate)
+          .and_raise(SsnValidationService::ServiceUnavailableError, "Service unavailable")
+        
+        person.valid?
+        expect(person.errors[:base]).to include(/temporarily unavailable/)
+      end
+    end
+
+    context "when SSN format is invalid" do
+      it "does not call Java service" do
+        person.ssn = "invalid"
+        
+        expect(validation_service).not_to receive(:validate)
+        person.valid?
+      end
     end
   end
 end
