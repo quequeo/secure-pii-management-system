@@ -1,0 +1,66 @@
+<div id="delete-modal" 
+     data-controller="modal" 
+     data-action="keydown@window->modal#closeOnEscape"
+     class="hidden fixed inset-0 z-50 overflow-y-auto"
+     aria-labelledby="modal-title" 
+     role="dialog" 
+     aria-modal="true">
+  
+  <!-- Backdrop -->
+  <div data-modal-target="backdrop"
+       data-action="click->modal#closeOnBackdrop"
+       class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity opacity-0 duration-200"></div>
+
+  <!-- Modal Panel -->
+  <div class="flex min-h-full items-center justify-center p-4">
+    <div data-modal-target="panel"
+         class="relative transform overflow-hidden rounded-lg bg-white shadow-xl transition-all w-full max-w-lg opacity-0 scale-95 duration-200">
+      
+      <!-- Header -->
+      <div class="bg-white px-6 pt-6 pb-4">
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-3">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+              <i class="ph ph-warning text-2xl text-red-600"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900" id="modal-title">
+                <%= @title %>
+              </h3>
+            </div>
+          </div>
+          <button type="button"
+                  data-action="click->modal#close"
+                  class="rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 transition">
+            <i class="ph ph-x text-xl"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="px-6 py-4">
+        <p class="text-sm text-gray-600">
+          <%= @message %>
+        </p>
+        <p class="text-sm text-gray-500 mt-2">
+          This action cannot be undone.
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div class="bg-gray-50 px-6 py-4 flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
+        <button type="button"
+                data-action="click->modal#close"
+                class="w-full sm:w-auto px-4 py-2.5 rounded-lg text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition">
+          Discard
+        </button>
+        <button type="button"
+                data-action="click->modal#confirm"
+                class="w-full sm:w-auto px-4 py-2.5 rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+

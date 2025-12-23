@@ -52,10 +52,10 @@ RSpec.describe PersonCardComponent, type: :component do
     expect(page).to have_css('a[title="Edit"] i.ph-pencil-simple')
   end
 
-  it "displays Delete icon button" do
+  it "displays Delete icon link" do
     render_inline(described_class.new(person: presenter))
 
-    expect(page).to have_css('button[title="Delete"] i.ph-trash')
+    expect(page).to have_css('a[title="Delete"] i.ph-trash')
   end
 end
 
