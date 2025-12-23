@@ -22,7 +22,7 @@ module Sanitizable
 
     sanitized = Rails::Html::FullSanitizer.new.sanitize(value)
     
-    return value if sanitized.nil?
+    return '' if sanitized.nil?
     
     sanitized = CGI.unescapeHTML(sanitized)
     

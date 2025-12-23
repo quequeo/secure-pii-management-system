@@ -70,17 +70,17 @@ RSpec.describe Sanitizable do
     end
   end
 
-  describe 'SQL injection prevention' do
-    it 'escapes single quotes' do
+  describe 'legitimate special characters preservation' do
+    it 'preserves single quotes in names' do
       record = dummy_class.new(first_name: "O'Brien")
       record.valid?
       expect(record.first_name).to eq("O'Brien")
     end
 
-    it 'removes SQL comments' do
-      record = dummy_class.new(first_name: "Name -- DROP TABLE")
+    it 'preserves double hyphens in names' do
+      record = dummy_class.new(first_name: "Name -- Surname")
       record.valid?
-      expect(record.first_name).to eq("Name -- DROP TABLE")
+      expect(record.first_name).to eq("Name -- Surname")
     end
   end
 

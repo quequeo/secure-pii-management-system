@@ -34,6 +34,8 @@ public class SsnController {
             return null;
         }
         
+        // First remove complete HTML tags (e.g., <script>), 
+        // then remove any remaining isolated angle brackets (e.g., < or >)
         return input
             .replaceAll("<[^>]*>", "")
             .replaceAll("[<>]", "")
