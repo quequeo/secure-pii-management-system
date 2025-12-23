@@ -1,11 +1,11 @@
 <tr class="hover:bg-gray-50 transition">
-  <td class="px-6 py-4 whitespace-nowrap">
-    <div class="flex items-center">
+  <td class="px-6 py-4">
+    <div class="flex items-center min-w-0">
       <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
         <span class="text-blue-600 font-semibold text-sm"><%= person.initials %></span>
       </div>
-      <div class="ml-4">
-        <div class="text-sm font-medium text-gray-900"><%= person.full_name %></div>
+      <div class="ml-4 min-w-0 max-w-xs">
+        <div class="text-sm font-medium text-gray-900 truncate" title="<%= person.full_name %>"><%= person.full_name %></div>
         <div class="text-xs text-gray-500"><%= person.has_middle_name? ? "With middle name" : "No middle name" %></div>
       </div>
     </div>
@@ -20,8 +20,8 @@
   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
     <%= person.formatted_created_at %>
   </td>
-  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-    <div class="flex items-center justify-end gap-2">
+  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium w-32">
+    <div class="flex items-center justify-end gap-3">
       <%= link_to person, 
           data: { turbo_frame: "_top" }, 
           class: "text-blue-600 hover:text-blue-900 transition", 
