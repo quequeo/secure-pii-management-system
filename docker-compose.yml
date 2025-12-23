@@ -1,0 +1,79 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: pii-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-secure_pii_development}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pii-network
+
+  java-service:
+    build:
+      context: ./java-service
+      dockerfile: Dockerfile
+    container_name: pii-java-service
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - pii-network
+
+  rails-app:
+    build:
+      context: ./rails-app
+      dockerfile: Dockerfile
+    container_name: pii-rails-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      java-service:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      RAILS_ENV: ${RAILS_ENV:-development}
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: ${POSTGRES_DB:-secure_pii_development}
+      DATABASE_USERNAME: ${POSTGRES_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      JAVA_SERVICE_URL: http://java-service:8080
+    volumes:
+      - ./rails-app:/app
+      - bundle_cache:/usr/local/bundle
+    command: ["bin/docker-entrypoint.sh"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/up"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - pii-network
+
+volumes:
+  postgres_data:
+  bundle_cache:
+
+networks:
+  pii-network:
+    driver: bridge
+
