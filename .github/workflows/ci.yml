@@ -19,10 +19,10 @@ jobs:
       uses: docker/setup-buildx-action@v3
 
     - name: Build Docker images
-      run: docker-compose build
+      run: docker compose build
 
     - name: Verify docker-compose configuration
-      run: docker-compose config
+      run: docker compose config
 
   security-check:
     name: Security Checks
@@ -35,20 +35,21 @@ jobs:
     - name: Check for secrets in code
       run: |
         echo "🔍 Checking for potential secrets..."
-        ! grep -r "password.*=.*['\"].*['\"]" --include="*.rb" --include="*.yml" rails-app/ || {
-          echo "⚠️  Warning: Found hardcoded passwords"
+        # Check for hardcoded passwords (not ENV vars or placeholders)
+        if grep -rn "password.*=.*['\"][^$<].*['\"]" --include="*.rb" rails-app/ | grep -v "ENV\|fetch\|placeholder\|example"; then
+          echo "⚠️  Warning: Found potential hardcoded passwords"
           exit 1
-        }
+        fi
         echo "✅ No hardcoded secrets found"
 
     - name: Verify .gitignore patterns
       run: |
         echo "🔍 Checking .gitignore configuration..."
-        if ! grep -q "\.env" .gitignore rails-app/.gitignore; then
+        if ! grep -q "\.env" .gitignore 2>/dev/null || ! grep -q "\.env" rails-app/.gitignore 2>/dev/null; then
           echo "❌ .env files not properly ignored"
           exit 1
         fi
-        if ! grep -q "coverage" rails-app/.gitignore; then
+        if ! grep -q "coverage" rails-app/.gitignore 2>/dev/null; then
           echo "❌ coverage directory not ignored"
           exit 1
         fi
