@@ -4,47 +4,27 @@
 [![Java Tests](https://github.com/quequeo/secure-pii-management-system/actions/workflows/java-tests.yml/badge.svg)](https://github.com/quequeo/secure-pii-management-system/actions/workflows/java-tests.yml)
 [![CI](https://github.com/quequeo/secure-pii-management-system/actions/workflows/ci.yml/badge.svg)](https://github.com/quequeo/secure-pii-management-system/actions/workflows/ci.yml)
 
-A Rails application with Java microservice for secure collection, storage, and display of Personal Identifiable Information (PII).
+A secure Rails 8 + Java microservices application for managing Personal Identifiable Information (PII) with encryption, SSN validation, and audit logging.
 
-> 📋 **Challenge Instructions**: See [CHALLENGE.md](CHALLENGE.md) for the original take-home challenge requirements.
-
----
-
-## 🎯 Project Overview
-
-This project demonstrates secure handling of sensitive PII data through:
-
-- **Rails 8 Application**: Web interface for collecting and displaying PII with encrypted storage
-- **Java Microservice**: SSN validation service implementing Social Security Administration (SSA) standards
-- **Security First**: Encryption at rest, masking in display, secure service-to-service communication
+> 📋 **Challenge**: This is a take-home engineering challenge. See [CHALLENGE.md](CHALLENGE.md) for requirements.
 
 ---
 
-## 🏗️ Architecture
+## 🎯 Overview
 
-```
-┌─────────────────┐         HTTP REST        ┌──────────────────┐
-│                 │ ◄──────────────────────► │                  │
-│  Rails App      │                          │  Java Service    │
-│  (Port 3000)    │   SSN Validation         │  (Port 8080)     │
-│                 │                          │                  │
-└────────┬────────┘                          └──────────────────┘
-         │
-         │ ActiveRecord
-         │ (Encrypted SSN)
-         ▼
-┌─────────────────┐
-│   PostgreSQL    │
-│   (Port 5432)   │
-└─────────────────┘
-```
+**Architecture**: Rails 8 application + Java Spring Boot microservice + PostgreSQL
 
-**Components**:
-- **Rails App** (`/rails-app`): Form submission, data storage, display with masking
-- **Java Service** (`/java-service`): SSN validation per SSA rules
-- **PostgreSQL**: Encrypted PII storage
+**Key Features**:
+- ✅ SSN validation per SSA standards (Java microservice)
+- ✅ Encryption at rest (ActiveRecord::Encryption)
+- ✅ SSN masking in display (`***-**-1234`)
+- ✅ Full CRUD with audit logging
+- ✅ Responsive design with Hotwire/Turbo
+- ✅ 99.63% test coverage
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed design decisions, security implementation, and system architecture.
+**Tech Stack**: Rails 8.0, Java 17, Spring Boot 3.2, PostgreSQL, Tailwind CSS, Stimulus, ViewComponents
+
+📖 See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed system design.
 
 ---
 
@@ -52,632 +32,223 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed design decisions, security i
 
 ### Prerequisites
 
-- **Docker & Docker Compose** (recommended)
-- **OR** for local development:
-  - Ruby 3.2+ and Rails 8
-  - Java 17+ and Maven
-  - PostgreSQL 14+
-  - Node.js (for Tailwind CSS)
+Choose one option:
+- **Option A**: Docker & Docker Compose (recommended)
+- **Option B**: Ruby 3.2+, Java 17+, Maven, PostgreSQL 14+
 
-### Running with Docker Compose ✅
+### Setup from Fresh Clone
 
-1. **Copy environment variables**:
+**1. Clone the repository**
 ```bash
+git clone <repository-url>
+cd secure-pii-management-system
+```
+
+**2. Choose your setup:**
+
+#### Option A: Docker Compose (Recommended ✅)
+
+```bash
+# Copy environment variables (optional - defaults work)
 cp .env.example .env
-# Edit .env if needed (defaults should work)
-```
 
-2. **Start all services**:
-```bash
+# Start all services (PostgreSQL + Java + Rails)
 docker-compose up --build
-```
 
-This will start:
-- PostgreSQL (port 5432)
-- Java SSN Validation Service (port 8080)
-- Rails Application (port 3000)
-
-3. **Access the application**:
-```bash
+# Access the app
 open http://localhost:3000
-```
 
-4. **Stop services**:
-```bash
+# Stop services
 docker-compose down
 ```
 
-**Docker Compose Features**:
-- ✅ Health checks for all services
-- ✅ Automatic database setup (`db:prepare`)
-- ✅ Service dependencies (Rails waits for Java + PostgreSQL)
-- ✅ Persistent volumes for database data
-- ✅ Hot-reload for Rails development
+That's it! Docker will handle everything: database setup, dependencies, and running all services.
 
-### Local Development Setup
+#### Option B: Local Development
 
-#### 1. Java Microservice
-
+**1. Setup Java Service (Port 8080)**
 ```bash
 cd java-service
-
-# Build and run tests
-mvn clean test
-
-# Run the service
+mvn clean install
 mvn spring-boot:run
-
-# Service will be available at http://localhost:8080
 ```
 
-**Endpoints**:
-- `POST /api/v1/ssn/validate` - Validate SSN
-- `GET /health` - Health check
-
-#### 2. Rails Application
-
+**2. Setup Rails App (Port 3000)**
 ```bash
 cd rails-app
 
 # Install dependencies
 bundle install
 
-# Setup database (when configured)
-rails db:create db:migrate
+# Configure environment
+cp .env.example .env
+# Edit .env and set: JAVA_SERVICE_URL=http://localhost:8080
 
-# Run tests
-bundle exec rspec
+# Setup database
+rails db:create db:migrate
 
 # Start server
 rails server
+```
 
-# Application will be available at http://localhost:3000
+**3. Access the app**
+```bash
+open http://localhost:3000
 ```
 
 ---
 
-## 🧪 Running Tests
-
-### Java Service Tests
+## 🧪 Testing
 
 ```bash
-cd java-service
-mvn test
+# Rails tests (99.63% coverage)
+cd rails-app && bundle exec rspec
 
-# With coverage report
-mvn clean test jacoco:report
-# View coverage: target/site/jacoco/index.html
+# Java tests (>70% coverage)
+cd java-service && mvn test
+
+# Coverage reports
+open rails-app/coverage/index.html
+open java-service/target/site/jacoco/index.html
 ```
 
-**Current Coverage**: >70% ✅
-
-### Rails Tests
-
-```bash
-cd rails-app
-
-# Run all tests (coverage report auto-generated)
-bundle exec rspec
-
-# With detailed output
-bundle exec rspec --format documentation
-
-# View coverage report
-open coverage/index.html
-```
-
-**Test Coverage**: 💯 **100.0%** (83/83 lines covered)  
-**Test Suite**: 81 examples, 0 failures  
-**Requirement**: >70% coverage ✅ (exceeds by 30%)
-
-**Note**: SimpleCov is configured to automatically generate coverage reports on every test run.
-
-Coverage breakdown:
-- Models: 100%
-- Controllers: 100%
-- Services: 100%
-- Views: N/A (tested via request specs)
+**Test Results**:
+- Rails: 279 examples, 0 failures, **99.63% coverage**
+- Java: 27 tests, 0 failures, **>70% coverage**
 
 ---
 
-## 🎨 Frontend Architecture
+## 📋 Core Features
 
-This project uses a **modern Rails frontend stack** with Hotwire for SPA-like interactions:
-
-### Technologies
-- **Hotwire Turbo**: SPA-like navigation without full page reloads
-- **Turbo Frames**: Scoped updates for specific page sections
-- **Stimulus**: Lightweight JavaScript controllers for interactivity
-- **ViewComponents**: Reusable, testable UI components
-- **Presenters**: Separation of presentation logic from models
-- **Tailwind CSS**: Utility-first CSS framework
-- **Importmaps**: No build step required for JavaScript
-
-### Key Features
-- **SSN Auto-formatting**: Automatically adds dashes as user types (`123456789` → `123-45-6789`)
-- **Client-side Validation**: Real-time form validation with visual feedback
-- **Auto-dismissing Flash Messages**: Success/error messages fade after 5 seconds
-- **Mobile Menu**: Responsive navigation with hamburger menu
-- **Turbo Frame Navigation**: Seamless transitions between list and detail views
-- **Responsive Design**: Mobile-first with separate desktop/mobile layouts
-
-### Components
-- **ButtonComponent**: Reusable button/link with variants (primary, secondary, danger)
-- **PersonCardComponent**: Display person record in table row
-- **EmptyStateComponent**: Empty state with icon and action button
-- **FormFieldComponent**: Form field with label, hint, and error messages
-
-### Presenters
-- **BasePresenter**: Foundation for all presenters with view context access
-- **PersonPresenter**: Encapsulates Person presentation logic (masked SSN, formatted dates, initials, etc.)
-
-### Stimulus Controllers
-- **ssn_format_controller.js**: Auto-format SSN input with dashes
-- **form_validation_controller.js**: Client-side form validation
-- **flash_controller.js**: Auto-dismiss flash messages
-- **mobile_menu_controller.js**: Toggle mobile navigation menu
-
----
-
-## 🔒 Security Features
-
-### Encryption at Rest
-- SSN encrypted in PostgreSQL using Rails encrypted attributes
-- Master key managed via Rails credentials
-
-### Data Masking
-- SSN displayed as `***-**-1234` (only last 4 digits visible)
-- Masking happens in presentation layer, not in backend service
+### PII Form Fields
+- First Name, Middle Name, Last Name (1-50 chars)
+- Middle Name Override (checkbox for users without middle name)
+- Social Security Number (XXX-XX-XXXX format, auto-formatted)
+- Address (street 1, street 2, city, state, ZIP)
 
 ### SSN Validation (Java Service)
 Per SSA standards:
-- Format: `XXX-XX-XXXX`
-- Area number (first 3 digits):
-  - Cannot be `000` or `666`
-  - `900-999` IS VALID (ITINs)
-- Group number (middle 2 digits): Cannot be `00`
-- Serial number (last 4 digits): Cannot be `0000`
-- Rejects known invalid test SSNs
+- ✅ Format: XXX-XX-XXXX
+- ✅ Area number: Not 000 or 666, allows 900-999 (ITINs)
+- ✅ Group number: Not 00
+- ✅ Serial number: Not 0000
+- ✅ Rejects known invalid SSNs (078-05-1120, etc.)
 
-### Transport Security
-- HTTPS/TLS for production (documented, not required for local dev)
-- Service-to-service communication via internal network
+### Security
+- **Encryption**: SSN encrypted at rest using Rails ActiveRecord::Encryption
+- **Masking**: SSN displayed as `***-**-1234`
+- **Sanitization**: XSS prevention on all text inputs
+- **Audit Logging**: All PII access tracked (view, create, update, delete)
+- **Transport**: HTTPS/TLS documented for production
 
 ---
 
-## 📂 Project Structure
+## 🏗️ Project Structure
 
 ```
-secure-pii-management-system/
+.
 ├── java-service/              # Spring Boot microservice
-│   ├── src/main/java/
-│   │   └── com/pii/validation/
-│   │       ├── controller/    # REST endpoints
-│   │       ├── dto/           # Request/Response objects
-│   │       └── service/       # SSN validation logic
-│   ├── src/test/java/         # JUnit tests
-│   ├── Dockerfile
-│   └── pom.xml
+│   ├── src/main/java/        # SSN validation service
+│   └── src/test/java/        # JUnit tests (27 tests)
 │
 ├── rails-app/                 # Rails 8 application
 │   ├── app/
-│   │   ├── controllers/       # Request handling (PeopleController)
-│   │   ├── models/            # Data models (Person with encryption)
-│   │   ├── views/             # ERB templates with Turbo Frames
-│   │   ├── components/        # ViewComponents (ButtonComponent, PersonCardComponent, etc.)
-│   │   ├── presenters/        # Presentation logic (BasePresenter, PersonPresenter)
-│   │   ├── services/          # Business logic (SsnValidationService)
-│   │   └── javascript/
-│   │       ├── controllers/   # Stimulus controllers (SSN format, form validation, etc.)
-│   │       └── application.js # Hotwire initialization
-│   ├── spec/                  # RSpec tests (100% coverage)
-│   │   ├── models/
-│   │   ├── requests/
-│   │   ├── services/
-│   │   ├── presenters/
-│   │   └── components/        # ViewComponent tests
-│   ├── Dockerfile
-│   └── Gemfile
+│   │   ├── models/           # Person (encrypted SSN), AuditLog
+│   │   ├── controllers/      # PeopleController, AuditLogsController
+│   │   ├── views/            # ERB templates + Turbo Frames
+│   │   ├── components/       # ViewComponents (5 components)
+│   │   ├── presenters/       # PersonPresenter (SSN masking)
+│   │   └── javascript/       # Stimulus controllers (6 controllers)
+│   └── spec/                 # RSpec tests (279 examples)
 │
-├── .cursorrules               # AI assistant context
-├── .github/
-│   └── copilot-instructions.md  # PR review guidelines
-├── CHALLENGE.md               # Original challenge requirements
-├── README.md                  # This file
-└── docker-compose.yml         # (coming soon)
+├── ARCHITECTURE.md            # Detailed system design (651 lines)
+├── CHALLENGE.md               # Original requirements
+└── docker-compose.yml         # Service orchestration
 ```
 
 ---
 
 ## ✅ Implementation Status
 
-### Core Features ✅ (100% Complete)
-- [x] Java microservice with SSN validation (100% functional)
-- [x] Unit tests for Java service (>70% coverage)
-- [x] Health check endpoints
-- [x] Rails 8 application setup
+**Core Requirements**: 100% Complete
+- [x] Rails application with PII form and display
+- [x] Java microservice for SSN validation
 - [x] PostgreSQL with encryption at rest
-- [x] PII data model with ActiveRecord::Encryption
-- [x] PII collection form (Rails views + Tailwind CSS)
-- [x] Rails ↔ Java service integration (HTTP REST)
-- [x] Display page with SSN masking (`***-**-1234`)
-- [x] SSN validation per SSA standards
-- [x] Input validation (multi-layer: HTML5, Rails, Java)
+- [x] SSN masking in views
+- [x] Docker Compose setup
+- [x] Tests: Rails (99.63%), Java (>70%)
+- [x] Documentation (README + ARCHITECTURE)
 
-### Infrastructure & DevOps ✅
-- [x] Docker Compose orchestration (3 services)
-- [x] Health checks for all services
-- [x] Hot-reload development environment
+**Bonus Features**: All Implemented
+- [x] Edit/Delete functionality (full CRUD)
+- [x] Audit logging for PII access
+- [x] Rate limiting on Java service
+- [x] Hotwire/Turbo for SPA-like navigation
+- [x] ViewComponents + Presenter pattern
+- [x] Stimulus controllers for interactivity
+- [x] Responsive design (mobile-first)
+- [x] Input sanitization (XSS prevention)
 - [x] CI/CD pipeline (GitHub Actions)
-- [x] Automated testing on every PR
-
-### Testing & Quality ✅
-- [x] RSpec test suite (81 examples, 0 failures)
-- [x] 💯 **100% code coverage** for Rails
-- [x] Integration tests (Rails ↔ Java)
-- [x] SimpleCov reporting
-- [x] Request specs for all endpoints
-
-### Documentation ✅
-- [x] README.md with setup instructions
-- [x] ARCHITECTURE.md (595 lines, technical design)
-- [x] CHALLENGE.md (original requirements)
-- [x] .cursorrules (AI coding guidelines)
-- [x] Inline code documentation
-
-### Bonus Features
-**Completed ✅:**
-- [x] CI/CD Pipeline (GitHub Actions) - 3 workflows
-- [x] Hotwire/Turbo - SPA-like navigation with Turbo Frames
-- [x] ViewComponents - Reusable UI components
-- [x] Presenter Pattern - Separation of presentation logic
-- [x] Stimulus Controllers - Interactive UI features
-- [x] Responsive Design - Mobile-first approach
-
-**Pending (Optional):**
-- [ ] Edit/Delete functionality
-- [ ] Audit logging for PII access
-- [ ] Rate limiting on Java service
-
-See [.cursorrules](.cursorrules) for detailed checklist.
-
----
-
-## 📊 Development Approach
-
-This project follows a **small PR methodology**:
-- Each PR implements ONE focused feature
-- Every PR includes tests
-- PRs are reviewed for quality and security
-- ~11 PRs completed so far
-
-### PR History
-1. Initial repository setup
-2. Java Spring Boot structure
-3. SSN validation DTOs
-4. SSN validation service
-5. Copilot review instructions
-6. SSN validation tests
-7. SSN controller & API
-8. Health check endpoint
-9. Java Dockerfile
-10. Rails 8 setup with RSpec
-11. Challenge documentation
-
----
-
-## ⏱️ Time Breakdown
-
-**Total Time**: ~20-24 hours (distributed over 3 days)  
-**Development Period**: December 21-23, 2024  
-**Commits**: 71 | **PRs**: 23 | **Lines of Code**: ~2,500 (Ruby + Java)
-
-### 1. Technical Setup & Infrastructure (~5 hours)
-- **Repository setup and project structure** (0.5 hours)
-  - Initial monorepo setup, .gitignore, folder structure
-- **Java microservice foundation** (1.5 hours)
-  - Spring Boot 3.2 setup, Maven configuration
-  - SSN validation service with SSA rules implementation
-  - DTOs (SsnValidationRequest, SsnValidationResponse)
-- **Rails 8 application setup** (1.5 hours)
-  - Rails new, RSpec configuration, PostgreSQL setup
-  - ActiveRecord::Encryption configuration
-  - Environment variables with dotenv-rails
-- **Docker & Docker Compose** (1.5 hours)
-  - Dockerfiles for Rails and Java services
-  - docker-compose.yml with health checks and service dependencies
-  - Debugging Alpine vs bash, volume caching issues
-
-### 2. Core Functional Development (~6 hours)
-- **Database schema and Person model** (1.5 hours)
-  - Migration with proper indexes and constraints
-  - Model validations (presence, format, length)
-  - Custom SSN validation calling Java service
-  - Encryption setup for SSN field
-- **PII collection form** (2 hours)
-  - PeopleController with CRUD operations
-  - Form view with all required fields
-  - Middle Name Override checkbox logic
-  - Tailwind CSS styling
-  - Error handling and display
-- **Display pages and SSN masking** (1.5 hours)
-  - Index view with records table
-  - Show view with detailed information
-  - Masked SSN implementation (`***-**-1234`)
-  - Responsive design (mobile + desktop)
-- **Rails-Java integration** (1 hour)
-  - SsnValidationService HTTP client
-  - Error handling (timeouts, connection failures)
-  - Integration in Person model validation
-
-### 3. Testing & Quality Assurance (~4 hours)
-- **RSpec test suite** (2.5 hours)
-  - Model specs (validations, encryption, helper methods)
-  - Request specs for all controller actions
-  - Service specs with WebMock for Java integration
-  - Factory setup with Faker
-  - Achieving 100% code coverage
-- **Java tests** (1 hour)
-  - JUnit 5 tests for SSN validation logic
-  - Controller integration tests
-  - JaCoCo configuration for coverage reporting
-- **Debugging and edge cases** (0.5 hours)
-  - SSN format edge cases (with/without hyphens)
-  - RecordNotFound error handling
-  - Presenter defensive coding
-
-### 4. Bonus Features (~5 hours)
-- **CI/CD Pipeline** (1 hour)
-  - GitHub Actions workflows (Rails, Java, CI checks)
-  - Coverage enforcement, security checks
-  - Docker build verification
-- **Frontend Modernization** (3 hours)
-  - Hotwire/Turbo integration for SPA-like navigation
-  - ViewComponents (Button, PersonCard, EmptyState, FormField)
-  - Presenter pattern (BasePresenter, PersonPresenter)
-  - Stimulus controllers (SSN format, form validation, flash, mobile menu)
-  - Turbo Frames for scoped updates
-- **Test Coverage Reporting** (0.5 hours)
-  - SimpleCov setup and configuration
-  - Coverage groups for different layers
-  - 100% coverage achievement
-- **Responsive Design** (0.5 hours)
-  - Mobile-first approach with Tailwind
-  - Separate desktop/mobile layouts
-
-### 5. Documentation (~3 hours)
-- **README.md** (1 hour)
-  - Quick start guide with Docker Compose
-  - Setup instructions for local development
-  - Testing instructions with coverage details
-  - Environment variables documentation
-  - Implementation status checklist
-  - Assumptions and trade-offs (Rails 8 decision)
-- **ARCHITECTURE.md** (1.5 hours)
-  - System architecture diagram (ASCII art)
-  - Component details with responsibilities
-  - Communication flow diagrams
-  - Security implementation details
-  - Key design decisions and rationale
-  - Technology choices justification
-  - 650+ lines of technical documentation
-- **Code comments and inline docs** (0.5 hours)
-  - Controller comments for clarity
-  - Model validation explanations
-  - Complex logic documentation
-
-### 6. Refinement & Polish (~1-2 hours)
-- **Code review and refactoring** (1 hour)
-  - Copilot review feedback implementation
-  - Controller refactoring (before_action, rescue_from)
-  - Removing console.log statements
-  - Presenter defensive coding improvements
-- **Bug fixes and iterations** (0.5-1 hour)
-  - Turbo Frame navigation fix
-  - Coverage drops investigation
-  - Bundler gem issues in Docker
-  - Small UI/UX improvements
-
----
-
-### AI Assistance Impact
-
-**Tools Used**: Cursor IDE + Claude Sonnet 4.5
-
-**Time Savings**: ~40-50% (estimated 35-40 hours without AI)
-
-**AI Contributions**:
-- Code generation for boilerplate (controllers, models, tests)
-- Test case suggestions and edge case identification
-- Documentation writing and structuring
-- Debugging assistance (Docker issues, test failures)
-- Best practices and security recommendations
-- Architecture pattern suggestions (ViewComponents, Presenters)
-
-**Human Contributions**:
-- System design and architecture decisions
-- Business logic and validation rules
-- Integration strategy (Rails ↔ Java)
-- Code review and quality assurance
-- Documentation review and refinement
-- Final testing and verification
-
-**Working Methodology**: Small, focused PRs (23 total) with tests for each feature, allowing for iterative development and easy code review.
-
----
-
-## 🤖 AI Assistance (Continued)
-
-**Context Management**: AI context is maintained in `.cursorrules` for consistency across development sessions, including:
-- Project requirements and constraints
-- Coding standards (one expect per test, no section comments)
-- PR/branch workflow guidelines
-- Detailed project checklist with completion status
-
-**Effectiveness**: AI was most valuable for:
-- ✅ Rapid prototyping and boilerplate reduction
-- ✅ Comprehensive test coverage suggestions
-- ✅ Documentation structure and clarity
-- ✅ Debugging complex integration issues
-
-**Limitations**: Human oversight required for:
-- ⚠️ System architecture decisions
-- ⚠️ Security implementation choices
-- ⚠️ Trade-off evaluation (Rails 8 vs 5.0.x)
-- ⚠️ Final code review and quality assurance
-
----
-
-## 📋 Assumptions & Trade-offs
-
-### 1. Development Environment
-- Docker Compose for production-like setup, but local dev works fine
-- PostgreSQL running locally for development and testing
-
-### 2. Ruby/Rails Version: Rails 8 instead of Rails 5.0.x
-
-**Decision**: Using **Rails 8.0.2** (latest) instead of Rails 5.0.x mentioned in challenge.
-
-**Rationale**:
-- **Security**: Rails 5.0.x reached End-of-Life (EOL) in 2020, no longer receives security patches
-- **Built-in Encryption**: Rails 7+ provides `ActiveRecord::Encryption` out-of-the-box for SSN encryption
-  - No need for additional gems like `attr_encrypted`
-  - More secure with key rotation support
-  - Simpler implementation and maintenance
-- **Modern Tooling**: 
-  - Better test framework support (RSpec 7.x)
-  - Integrated Tailwind CSS support
-  - Improved developer experience
-- **Production Readiness**: Current stack is more maintainable long-term
-
-**Trade-off**: Acknowledges the challenge mentioned Rails 5.0.x preference, but prioritizes security and modern best practices. Demonstrates ability to make informed technical decisions.
-
-### 3. SSN Validation as Microservice
-- Implemented as separate Java Spring Boot service per requirements
-- Validates SSN per SSA standards before Rails saves to database
-- Loose coupling allows independent scaling and updates
-
-### 4. Encryption Strategy
-- **At Rest**: Rails `encrypts :ssn` for database encryption
-- **In Transit**: Documented HTTPS/TLS (not required for local dev)
-- **Display**: Masking in presentation layer (`***-**-1234`)
-- Encryption keys managed via Rails credentials/initializers
-
-### 5. Testing Approach
-- Focus on backend quality with >70% coverage
-- RSpec for Rails, JUnit 5 for Java
-- Integration tests for service-to-service communication
-- Frontend tests optional (challenge stated this explicitly)
-
-### 6. PR Workflow
-- Small, focused PRs (~10-15 PRs total)
-- Each PR implements one feature with tests
-- Better code review, easier to track progress
-- Demonstrates incremental development skills
-
----
-
-## 🚀 CI/CD Pipeline
-
-This project includes automated testing and quality checks via GitHub Actions.
-
-### Workflows
-
-**1. Rails Tests** (`rails-tests.yml`)
-- Runs on every push/PR affecting Rails code
-- PostgreSQL service for integration tests
-- Executes full RSpec test suite
-- Verifies 100% code coverage
-- Uploads coverage artifacts
-
-**2. Java Tests** (`java-tests.yml`)
-- Runs on every push/PR affecting Java code
-- Maven test execution with JUnit 5
-- JaCoCo coverage reporting
-- Enforces >70% coverage requirement
-- Uploads coverage artifacts
-
-**3. CI Checks** (`ci.yml`)
-- Docker Compose build verification
-- Security checks (no hardcoded secrets)
-- Documentation completeness check
-- .gitignore configuration validation
-
-### Running Locally
-
-Simulate CI environment:
-```bash
-# Run all checks
-./scripts/ci-local.sh  # (optional script)
-
-# Or manually:
-cd rails-app && bundle exec rspec
-cd java-service && mvn clean test
-docker-compose build
-```
-
-### CI Status
-
-All workflows must pass before merging PRs. Check status badges at the top of this README.
 
 ---
 
 ## 🛠️ Environment Variables
 
-### For Docker Compose
+Both Docker and local setups come with `.env.example` files:
 
-Copy `.env.example` to `.env`:
+- **Root**: `.env.example` → For Docker Compose
+- **Rails**: `rails-app/.env.example` → For local development
+
+Default values work out of the box. Copy and customize if needed:
 ```bash
-cp .env.example .env
-```
-
-Variables (defaults work out of the box):
-```bash
-# PostgreSQL
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_DB=secure_pii_development
-
-# Rails
-RAILS_ENV=development
-
-# Java Service
-SPRING_PROFILES_ACTIVE=docker
-```
-
-### For Local Development
-
-Create `rails-app/.env`:
-```bash
-# Java Service
-JAVA_SERVICE_URL=http://localhost:8080
-
-# Database (optional, uses defaults if not set)
-DATABASE_HOST=localhost
-DATABASE_PORT=5432
-DATABASE_NAME=rails_app_development
-DATABASE_USERNAME=postgres
-DATABASE_PASSWORD=postgres
-
-# Rails
-RAILS_ENV=development
+cp .env.example .env                    # Docker
+cp rails-app/.env.example rails-app/.env  # Local dev
 ```
 
 ---
 
-## 🐛 Known Issues
+## 🤖 AI Assistance
 
-- ARCHITECTURE.md documentation pending
-- Code coverage metrics not yet tracked
-- Production deployment configuration needed
+**Tools Used**: Cursor IDE + Claude Sonnet 4.5
+
+**Time Investment**: ~20-24 hours over 3 days (estimated 35-40 hours without AI)
+
+**AI Contributions**:
+- Code generation for boilerplate (controllers, models, tests)
+- Test case suggestions and edge case identification
+- Documentation structure and writing
+- Debugging assistance (Docker, integration issues)
+- Architecture pattern suggestions (ViewComponents, Presenters)
+
+**Human Contributions**:
+- System design and architecture decisions
+- Business logic and SSN validation rules
+- Integration strategy (Rails ↔ Java)
+- Code review and quality assurance
+- Final testing and verification
+
+**Methodology**: Small, focused PRs with tests for each feature (23 PRs total).
+
+---
+
+## 📋 Key Decisions
+
+### Rails 8 vs Rails 5.0.x
+**Decision**: Used Rails 8.0.2 instead of Rails 5.0.x mentioned in challenge.
+
+**Rationale**:
+- Rails 5.0.x reached EOL in 2020 (no security patches)
+- Rails 7+ has built-in `ActiveRecord::Encryption` (no need for attr_encrypted gem)
+- Better security, modern tooling, improved developer experience
+- Demonstrates ability to make informed technical decisions
 
 ---
 
 ## 📚 Additional Resources
 
 - [CHALLENGE.md](CHALLENGE.md) - Original challenge requirements
-- [ARCHITECTURE.md](ARCHITECTURE.md) - System design *(coming soon)*
-- [.cursorrules](.cursorrules) - Development context and checklist
+- [ARCHITECTURE.md](ARCHITECTURE.md) - Detailed system design (651 lines)
+- [.cursorrules](.cursorrules) - Development guidelines and checklist
 
 ---
 
@@ -689,4 +260,13 @@ Private - For evaluation purposes only.
 
 ## 👤 Author
 
-Built by Jaime as a take-home engineering challenge.
+Built by Jaime as a take-home engineering challenge demonstrating:
+- Secure PII handling with encryption and masking
+- Microservices architecture (Rails + Java)
+- Test-driven development (99.63% coverage)
+- Modern Rails patterns (Hotwire, ViewComponents, Presenters)
+- Production-ready code quality
+
+---
+
+**Status**: ✅ Ready for submission and demo
