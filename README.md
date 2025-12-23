@@ -1,5 +1,9 @@
 # Secure PII Management System
 
+[![Rails Tests](https://github.com/quequeo/secure-pii-management-system/actions/workflows/rails-tests.yml/badge.svg)](https://github.com/quequeo/secure-pii-management-system/actions/workflows/rails-tests.yml)
+[![Java Tests](https://github.com/quequeo/secure-pii-management-system/actions/workflows/java-tests.yml/badge.svg)](https://github.com/quequeo/secure-pii-management-system/actions/workflows/java-tests.yml)
+[![CI](https://github.com/quequeo/secure-pii-management-system/actions/workflows/ci.yml/badge.svg)](https://github.com/quequeo/secure-pii-management-system/actions/workflows/ci.yml)
+
 A Rails application with Java microservice for secure collection, storage, and display of Personal Identifiable Information (PII).
 
 > 📋 **Challenge Instructions**: See [CHALLENGE.md](CHALLENGE.md) for the original take-home challenge requirements.
@@ -238,27 +242,45 @@ secure-pii-management-system/
 
 ## ✅ Implementation Status
 
-### Completed ✅
-- [x] Java microservice with SSN validation (100%)
+### Core Features ✅ (100% Complete)
+- [x] Java microservice with SSN validation (100% functional)
 - [x] Unit tests for Java service (>70% coverage)
-- [x] Health check endpoint
+- [x] Health check endpoints
 - [x] Rails 8 application setup
-- [x] RSpec test configuration
-- [x] Project documentation structure
+- [x] PostgreSQL with encryption at rest
+- [x] PII data model with ActiveRecord::Encryption
+- [x] PII collection form (Rails views + Tailwind CSS)
+- [x] Rails ↔ Java service integration (HTTP REST)
+- [x] Display page with SSN masking (`***-**-1234`)
+- [x] SSN validation per SSA standards
+- [x] Input validation (multi-layer: HTML5, Rails, Java)
 
-### In Progress 🚧
-- [x] PostgreSQL setup and configuration
-- [x] PII data model with encryption
-- [x] PII collection form (Rails views)
-- [x] Rails ↔ Java service integration
-- [x] Display page with SSN masking
-- [x] Docker Compose orchestration
+### Infrastructure & DevOps ✅
+- [x] Docker Compose orchestration (3 services)
+- [x] Health checks for all services
+- [x] Hot-reload development environment
+- [x] CI/CD pipeline (GitHub Actions)
+- [x] Automated testing on every PR
 
-### Planned 📋
-- [ ] ARCHITECTURE.md documentation
-- [ ] Integration tests
-- [ ] Code coverage >70% for Rails
-- [ ] Setup instructions refinement
+### Testing & Quality ✅
+- [x] RSpec test suite (81 examples, 0 failures)
+- [x] 💯 **100% code coverage** for Rails
+- [x] Integration tests (Rails ↔ Java)
+- [x] SimpleCov reporting
+- [x] Request specs for all endpoints
+
+### Documentation ✅
+- [x] README.md with setup instructions
+- [x] ARCHITECTURE.md (595 lines, technical design)
+- [x] CHALLENGE.md (original requirements)
+- [x] .cursorrules (AI coding guidelines)
+- [x] Inline code documentation
+
+### Bonus Features (Optional)
+- [ ] Edit/Delete functionality
+- [ ] Audit logging for PII access
+- [ ] Rate limiting on Java service
+- [ ] Hotwire/Turbo for dynamic UI
 
 See [.cursorrules](.cursorrules) for detailed checklist.
 
@@ -345,6 +367,51 @@ Context for AI is maintained in `.cursorrules` for consistency across developmen
 - Each PR implements one feature with tests
 - Better code review, easier to track progress
 - Demonstrates incremental development skills
+
+---
+
+## 🚀 CI/CD Pipeline
+
+This project includes automated testing and quality checks via GitHub Actions.
+
+### Workflows
+
+**1. Rails Tests** (`rails-tests.yml`)
+- Runs on every push/PR affecting Rails code
+- PostgreSQL service for integration tests
+- Executes full RSpec test suite
+- Verifies 100% code coverage
+- Uploads coverage artifacts
+
+**2. Java Tests** (`java-tests.yml`)
+- Runs on every push/PR affecting Java code
+- Maven test execution with JUnit 5
+- JaCoCo coverage reporting
+- Enforces >70% coverage requirement
+- Uploads coverage artifacts
+
+**3. CI Checks** (`ci.yml`)
+- Docker Compose build verification
+- Security checks (no hardcoded secrets)
+- Documentation completeness check
+- .gitignore configuration validation
+
+### Running Locally
+
+Simulate CI environment:
+```bash
+# Run all checks
+./scripts/ci-local.sh  # (optional script)
+
+# Or manually:
+cd rails-app && bundle exec rspec
+cd java-service && mvn clean test
+docker-compose build
+```
+
+### CI Status
+
+All workflows must pass before merging PRs. Check status badges at the top of this README.
 
 ---
 
