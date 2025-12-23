@@ -356,5 +356,3 @@ Private - For evaluation purposes only.
 ## 👤 Author
 
 Built by Jaime as a take-home engineering challenge.
-
-**Time Investment**: ~8 hours so far (setup, Java service, testing, documentation)
