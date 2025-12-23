@@ -1,5 +1,10 @@
 class Person < ApplicationRecord
+  include Sanitizable
+
   encrypts :ssn
+  
+  sanitize_attributes :first_name, :middle_name, :last_name, 
+                      :street_address_1, :street_address_2, :city
   
   validates :first_name, presence: true, length: { minimum: 1, maximum: 50 }
   validates :middle_name, length: { maximum: 50 }, allow_blank: true

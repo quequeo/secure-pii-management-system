@@ -234,4 +234,76 @@ RSpec.describe Person, type: :model do
       end
     end
   end
+
+  describe 'input sanitization and XSS prevention' do
+    it 'sanitizes HTML from first_name' do
+      person = build(:person, first_name: '<script>alert("xss")</script>John')
+      person.valid?
+      expect(person.first_name).to eq('John')
+    end
+
+    it 'sanitizes HTML from middle_name' do
+      person = build(:person, middle_name: '<b>Middle</b>')
+      person.valid?
+      expect(person.middle_name).to eq('Middle')
+    end
+
+    it 'sanitizes HTML from last_name' do
+      person = build(:person, last_name: '<i>Doe</i>')
+      person.valid?
+      expect(person.last_name).to eq('Doe')
+    end
+
+    it 'sanitizes HTML from street_address_1' do
+      person = build(:person, street_address_1: '<script>alert("xss")</script>123 Main St')
+      person.valid?
+      expect(person.street_address_1).to eq('123 Main St')
+    end
+
+    it 'sanitizes HTML from street_address_2' do
+      person = build(:person, street_address_2: '<div>Apt 2</div>')
+      person.valid?
+      expect(person.street_address_2).to eq('Apt 2')
+    end
+
+    it 'sanitizes HTML from city' do
+      person = build(:person, city: '<span>New York</span>')
+      person.valid?
+      expect(person.city).to eq('New York')
+    end
+
+    it 'trims whitespace from all fields' do
+      person = build(:person, 
+        first_name: '  John  ',
+        last_name: '  Doe  ',
+        city: '  New York  '
+      )
+      person.valid?
+      expect(person.first_name).to eq('John')
+      expect(person.last_name).to eq('Doe')
+      expect(person.city).to eq('New York')
+    end
+
+    it 'squishes multiple spaces' do
+      person = build(:person, first_name: 'John    Doe')
+      person.valid?
+      expect(person.first_name).to eq('John Doe')
+    end
+
+    it 'removes dangerous XSS payloads' do
+      xss_payloads = [
+        '<img src=x onerror="alert(1)">',
+        '<iframe src="javascript:alert(1)">',
+        '<body onload="alert(1)">',
+        '<svg onload="alert(1)">',
+        '<input onfocus="alert(1)" autofocus>'
+      ]
+
+      xss_payloads.each do |payload|
+        person = build(:person, first_name: "#{payload}Name")
+        person.valid?
+        expect(person.first_name).to eq('Name')
+      end
+    end
+  end
 end

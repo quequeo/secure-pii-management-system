@@ -19,12 +19,24 @@ public class SsnController {
 
     @PostMapping("/validate")
     public ResponseEntity<SsnValidationResponse> validate(@Valid @RequestBody SsnValidationRequest request) {
-        SsnValidationResponse response = validationService.validate(request.getSsn());
+        String sanitizedSsn = sanitizeInput(request.getSsn());
+        SsnValidationResponse response = validationService.validate(sanitizedSsn);
 
         if (response.isValid()) {
             return ResponseEntity.ok(response);
         }
 
         return ResponseEntity.badRequest().body(response);
+    }
+
+    private String sanitizeInput(String input) {
+        if (input == null) {
+            return null;
+        }
+        
+        return input
+            .replaceAll("<[^>]*>", "")
+            .replaceAll("[<>]", "")
+            .trim();
     }
 }
