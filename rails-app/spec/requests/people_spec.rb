@@ -1,6 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe "People", type: :request do
+  before do
+    allow_any_instance_of(SsnValidationService).to receive(:validate)
+      .and_return({ valid: true })
+  end
+
   describe "GET /people" do
     it "returns http success" do
       get people_path

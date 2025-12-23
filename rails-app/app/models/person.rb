@@ -8,6 +8,7 @@ class Person < ApplicationRecord
     with: /\A\d{3}-\d{2}-\d{4}\z/, 
     message: "must be in XXX-XX-XXXX format" 
   }
+  validate :ssn_must_be_valid_per_ssa_standards
   validates :street_address_1, presence: true
   validates :city, presence: true
   validates :state, presence: true, format: { 
@@ -35,5 +36,20 @@ class Person < ApplicationRecord
 
   def normalize_state
     self.state = state&.upcase
+  end
+
+  def ssn_must_be_valid_per_ssa_standards
+    return if ssn.blank? || errors[:ssn].any?
+
+    begin
+      result = SsnValidationService.new.validate(ssn)
+      
+      unless result[:valid]
+        errors.add(:ssn, result[:error] || "is not valid per SSA standards")
+      end
+    rescue SsnValidationService::ServiceUnavailableError => e
+      errors.add(:base, "SSN validation service is temporarily unavailable. Please try again later.")
+      Rails.logger.error("SSN Validation Service Error: #{e.message}")
+    end
   end
 end
