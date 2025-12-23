@@ -13,6 +13,15 @@ gem "bootsnap", require: false
 gem "kamal", require: false
 gem "thruster", require: false
 
+# Hotwire's SPA-like page accelerator
+gem "turbo-rails"
+
+# Hotwire's modest JavaScript framework
+gem "stimulus-rails"
+
+# ViewComponent framework
+gem "view_component"
+
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
   gem "brakeman", require: false

@@ -22,9 +22,31 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+  <body class="bg-gray-50">
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+      <div class="container mx-auto px-4 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <%= link_to root_path, class: "text-2xl font-bold text-blue-600 hover:text-blue-700 transition", data: { turbo_frame: "_top" } do %>
+              🔒 Secure PII System
+            <% end %>
+          </div>
+          <div class="flex items-center space-x-4">
+            <%= link_to "All Records", people_path, class: "text-gray-600 hover:text-gray-900 font-medium transition", data: { turbo_frame: "_top" } %>
+            <%= link_to "New Record", new_person_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition", data: { turbo_frame: "_top" } %>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-8">
       <%= yield %>
     </main>
+
+    <footer class="bg-white border-t border-gray-200 mt-12">
+      <div class="container mx-auto px-4 py-6 text-center text-gray-600 text-sm">
+        <p>Secure PII Management System - Built with Rails <%= Rails.version %> + Hotwire</p>
+      </div>
+    </footer>
   </body>
 </html>
