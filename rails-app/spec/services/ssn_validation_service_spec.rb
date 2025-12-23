@@ -53,6 +53,14 @@ RSpec.describe SsnValidationService do
         result = service.validate(ssn)
         expect(result[:error]).to eq("Invalid SSN format")
       end
+
+      it "handles invalid JSON in 400 response" do
+        stub_request(:post, api_url)
+          .to_return(status: 400, body: "Not valid JSON")
+
+        result = service.validate(ssn)
+        expect(result[:error]).to eq("Invalid SSN format")
+      end
     end
 
     context "when Java service is unavailable" do
