@@ -48,23 +48,47 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) *(coming soon)* for detailed design decis
 
 ### Prerequisites
 
-- Docker & Docker Compose *(coming soon)*
+- **Docker & Docker Compose** (recommended)
 - **OR** for local development:
-  - Ruby 3.3+ and Rails 8
+  - Ruby 3.2+ and Rails 8
   - Java 17+ and Maven
   - PostgreSQL 14+
+  - Node.js (for Tailwind CSS)
 
-### Running with Docker Compose
+### Running with Docker Compose ✅
 
+1. **Copy environment variables**:
 ```bash
-# Start all services
-docker-compose up
+cp .env.example .env
+# Edit .env if needed (defaults should work)
+```
 
-# Access the application
+2. **Start all services**:
+```bash
+docker-compose up --build
+```
+
+This will start:
+- PostgreSQL (port 5432)
+- Java SSN Validation Service (port 8080)
+- Rails Application (port 3000)
+
+3. **Access the application**:
+```bash
 open http://localhost:3000
 ```
 
-> ⚠️ **Note**: Docker Compose setup is in progress. Use local development for now.
+4. **Stop services**:
+```bash
+docker-compose down
+```
+
+**Docker Compose Features**:
+- ✅ Health checks for all services
+- ✅ Automatic database setup (`db:prepare`)
+- ✅ Service dependencies (Rails waits for Java + PostgreSQL)
+- ✅ Persistent volumes for database data
+- ✅ Hot-reload for Rails development
 
 ### Local Development Setup
 
@@ -208,12 +232,12 @@ secure-pii-management-system/
 - [x] Project documentation structure
 
 ### In Progress 🚧
-- [ ] PostgreSQL setup and configuration
-- [ ] PII data model with encryption
-- [ ] PII collection form (Rails views)
-- [ ] Rails ↔ Java service integration
-- [ ] Display page with SSN masking
-- [ ] Docker Compose orchestration
+- [x] PostgreSQL setup and configuration
+- [x] PII data model with encryption
+- [x] PII collection form (Rails views)
+- [x] Rails ↔ Java service integration
+- [x] Display page with SSN masking
+- [x] Docker Compose orchestration
 
 ### Planned 📋
 - [ ] ARCHITECTURE.md documentation
@@ -311,31 +335,52 @@ Context for AI is maintained in `.cursorrules` for consistency across developmen
 
 ## 🛠️ Environment Variables
 
-Create a `.env` file in the root:
+### For Docker Compose
 
+Copy `.env.example` to `.env`:
+```bash
+cp .env.example .env
+```
+
+Variables (defaults work out of the box):
+```bash
+# PostgreSQL
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=secure_pii_development
+
+# Rails
+RAILS_ENV=development
+
+# Java Service
+SPRING_PROFILES_ACTIVE=docker
+```
+
+### For Local Development
+
+Create `rails-app/.env`:
 ```bash
 # Java Service
 JAVA_SERVICE_URL=http://localhost:8080
 
-# PostgreSQL (when configured)
-DATABASE_URL=postgresql://localhost:5432/pii_development
+# Database (optional, uses defaults if not set)
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_NAME=rails_app_development
 DATABASE_USERNAME=postgres
 DATABASE_PASSWORD=postgres
 
 # Rails
 RAILS_ENV=development
-RAILS_MASTER_KEY=<your-master-key>
 ```
-
-> `.env.example` coming soon with full configuration.
 
 ---
 
 ## 🐛 Known Issues
 
-- Docker Compose configuration not yet implemented
-- PostgreSQL not yet configured in Rails
-- Integration between Rails and Java service pending
+- ARCHITECTURE.md documentation pending
+- Code coverage metrics not yet tracked
+- Production deployment configuration needed
 
 ---
 
