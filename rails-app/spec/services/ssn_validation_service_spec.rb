@@ -27,13 +27,31 @@ RSpec.describe SsnValidationService do
         expect(result[:valid]).to be false
       end
 
-      it "includes the error message from Java service" do
+      it "includes the error message from Java service (legacy errorMessage)" do
         stub_request(:post, api_url)
           .with(body: { ssn: ssn }.to_json)
           .to_return(status: 200, body: { valid: false, errorMessage: "Area number cannot be 000" }.to_json)
 
         result = service.validate(ssn)
         expect(result[:error]).to eq("Area number cannot be 000")
+      end
+
+      it "includes error messages from Java service errors array (current format)" do
+        stub_request(:post, api_url)
+          .with(body: { ssn: ssn }.to_json)
+          .to_return(status: 200, body: { valid: false, errors: ["Area number (first 3 digits) cannot be 000"] }.to_json)
+
+        result = service.validate(ssn)
+        expect(result[:error]).to eq("Area number (first 3 digits) cannot be 000")
+      end
+
+      it "joins multiple error messages with comma" do
+        stub_request(:post, api_url)
+          .with(body: { ssn: ssn }.to_json)
+          .to_return(status: 200, body: { valid: false, errors: ["Error 1", "Error 2", "Error 3"] }.to_json)
+
+        result = service.validate(ssn)
+        expect(result[:error]).to eq("Error 1, Error 2, Error 3")
       end
     end
 
@@ -46,12 +64,20 @@ RSpec.describe SsnValidationService do
         expect(result[:valid]).to be false
       end
 
-      it "includes error message" do
+      it "includes error message (legacy errorMessage)" do
         stub_request(:post, api_url)
           .to_return(status: 400, body: { errorMessage: "Invalid SSN format" }.to_json)
 
         result = service.validate(ssn)
         expect(result[:error]).to eq("Invalid SSN format")
+      end
+
+      it "includes error messages from errors array (current format)" do
+        stub_request(:post, api_url)
+          .to_return(status: 400, body: { errors: ["Invalid format"] }.to_json)
+
+        result = service.validate(ssn)
+        expect(result[:error]).to eq("Invalid format")
       end
 
       it "handles invalid JSON in 400 response" do
