@@ -1,6 +1,6 @@
 class PeopleController < ApplicationController
   def index
-    @people = Person.order(created_at: :desc)
+    @people = Person.order(created_at: :desc).map { |person| PersonPresenter.new(person, view_context) }
   end
 
   def new
@@ -18,7 +18,7 @@ class PeopleController < ApplicationController
   end
 
   def show
-    @person = Person.find(params[:id])
+    @person = PersonPresenter.new(Person.find(params[:id]), view_context)
   end
 
   private

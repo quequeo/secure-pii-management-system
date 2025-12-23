@@ -12,7 +12,7 @@
   <div class="bg-white shadow rounded-lg overflow-hidden">
     <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
       <h1 class="text-2xl font-bold text-gray-900">PII Record Details</h1>
-      <p class="mt-1 text-sm text-gray-500">Created <%= @person.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+      <p class="mt-1 text-sm text-gray-500">Created <%= @person.formatted_created_at %></p>
     </div>
 
     <div class="px-6 py-6 space-y-6">
@@ -22,6 +22,11 @@
           <div>
             <dt class="text-sm font-medium text-gray-500">Full Name</dt>
             <dd class="mt-1 text-sm text-gray-900"><%= @person.full_name %></dd>
+          </div>
+
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Initials</dt>
+            <dd class="mt-1 text-sm text-gray-900 font-mono"><%= @person.initials %></dd>
           </div>
 
           <div>
@@ -37,7 +42,7 @@
           <div>
             <dt class="text-sm font-medium text-gray-500">Middle Name</dt>
             <dd class="mt-1 text-sm text-gray-900">
-              <%= @person.middle_name.present? ? @person.middle_name : "(Not provided)" %>
+              <%= @person.has_middle_name? ? @person.middle_name : "(Not provided)" %>
             </dd>
           </div>
 
@@ -50,28 +55,27 @@
 
       <div class="border-t border-gray-200 pt-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Address</h2>
-        <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div class="sm:col-span-2">
-            <dt class="text-sm font-medium text-gray-500">Street Address</dt>
-            <dd class="mt-1 text-sm text-gray-900">
-              <%= @person.street_address_1 %><br>
-              <%= @person.street_address_2 if @person.street_address_2.present? %>
-            </dd>
-          </div>
-
+        <dl class="grid grid-cols-1 gap-4">
           <div>
-            <dt class="text-sm font-medium text-gray-500">City</dt>
-            <dd class="mt-1 text-sm text-gray-900"><%= @person.city %></dd>
+            <dt class="text-sm font-medium text-gray-500">Full Address</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @person.full_address %></dd>
           </div>
+          
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div>
+              <dt class="text-sm font-medium text-gray-500">City</dt>
+              <dd class="mt-1 text-sm text-gray-900"><%= @person.city %></dd>
+            </div>
 
-          <div>
-            <dt class="text-sm font-medium text-gray-500">State</dt>
-            <dd class="mt-1 text-sm text-gray-900"><%= @person.state %></dd>
-          </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">State</dt>
+              <dd class="mt-1 text-sm text-gray-900"><%= @person.state %></dd>
+            </div>
 
-          <div>
-            <dt class="text-sm font-medium text-gray-500">ZIP Code</dt>
-            <dd class="mt-1 text-sm text-gray-900 font-mono"><%= @person.zip_code %></dd>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">ZIP Code</dt>
+              <dd class="mt-1 text-sm text-gray-900 font-mono"><%= @person.zip_code %></dd>
+            </div>
           </div>
         </dl>
       </div>
@@ -85,8 +89,8 @@
           </div>
 
           <div>
-            <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
-            <dd class="mt-1 text-sm text-gray-900"><%= @person.updated_at.strftime("%B %d, %Y at %I:%M %p") %></dd>
+            <dt class="text-sm font-medium text-gray-500">Display Name</dt>
+            <dd class="mt-1 text-sm text-gray-900"><%= @person.display_name %></dd>
           </div>
         </dl>
       </div>
