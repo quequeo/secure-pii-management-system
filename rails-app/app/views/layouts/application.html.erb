@@ -39,7 +39,6 @@
           <!-- Desktop Navigation -->
           <div class="hidden md:flex items-center space-x-4">
             <%= link_to "All Records", people_path, class: "text-gray-600 hover:text-gray-900 font-medium transition", data: { turbo_frame: "_top" } %>
-            <%= link_to "New Record", new_person_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition", data: { turbo_frame: "_top" } %>
           </div>
 
           <!-- Mobile Menu Button -->
@@ -54,9 +53,6 @@
         <div data-mobile-menu-target="menu" class="hidden md:hidden mt-4 pt-4 border-t border-gray-200 space-y-2">
           <%= link_to "All Records", people_path, 
               class: "block text-gray-600 hover:text-gray-900 font-medium py-2 transition", 
-              data: { turbo_frame: "_top", action: "click->mobile-menu#close" } %>
-          <%= link_to "New Record", new_person_path, 
-              class: "block bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition text-center", 
               data: { turbo_frame: "_top", action: "click->mobile-menu#close" } %>
         </div>
       </div>

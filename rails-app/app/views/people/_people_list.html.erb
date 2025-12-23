@@ -52,7 +52,7 @@
           </dl>
           
           <div class="mt-4">
-            <%= link_to "View Details", person, class: "block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition" %>
+            <%= link_to "View Details", person, data: { turbo_frame: "_top" }, class: "block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition" %>
           </div>
         </div>
       <% end %>
