@@ -40,5 +40,13 @@ RSpec.describe ButtonComponent, type: :component do
       expect(page).to have_css("button.font-semibold")
     end
   end
+
+  describe "custom classes" do
+    it "merges custom classes with variant classes" do
+      render_inline(described_class.new(text: "Custom", href: "/path", class: "my-custom-class"))
+
+      expect(page).to have_css("a.my-custom-class.bg-blue-600")
+    end
+  end
 end
 

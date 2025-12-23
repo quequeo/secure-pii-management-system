@@ -123,5 +123,14 @@ RSpec.describe PersonPresenter, type: :presenter do
       expect(presenter.id).to eq(123)
     end
   end
+
+  describe "view_context access" do
+    it "provides access to view context via h helper" do
+      view_context = double("view_context")
+      presenter_with_context = described_class.new(person, view_context)
+      
+      expect(presenter_with_context.h).to eq(view_context)
+    end
+  end
 end
 
