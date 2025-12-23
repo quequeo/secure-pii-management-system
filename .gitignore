@@ -9,10 +9,11 @@ Thumbs.db
 *.swp
 *.swo
 
-# Environment
+# Environment (allow .env.example files)
 .env
 .env.local
 .env.*.local
+!**/.env.example
 
 # Logs
 *.log
