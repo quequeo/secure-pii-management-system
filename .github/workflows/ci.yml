@@ -45,14 +45,19 @@ jobs:
     - name: Verify .gitignore patterns
       run: |
         echo "🔍 Checking .gitignore configuration..."
-        if ! grep -q "\.env" .gitignore 2>/dev/null || ! grep -q "\.env" rails-app/.gitignore 2>/dev/null; then
+        
+        # Check that .env is ignored (in root or rails-app)
+        if ! grep -q "^\.env$" .gitignore 2>/dev/null && ! grep -q "^\.env$" rails-app/.gitignore 2>/dev/null; then
           echo "❌ .env files not properly ignored"
           exit 1
         fi
+        
+        # Check that coverage is ignored in rails-app
         if ! grep -q "coverage" rails-app/.gitignore 2>/dev/null; then
-          echo "❌ coverage directory not ignored"
+          echo "❌ coverage directory not ignored in rails-app"
           exit 1
         fi
+        
         echo "✅ .gitignore properly configured"
 
   documentation:
