@@ -1,6 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Formats SSN input as user types: XXX-XX-XXXX
 export default class extends Controller {
   static targets = ["input"]
 
@@ -9,7 +8,7 @@ export default class extends Controller {
   }
 
   format(event) {
-    let value = event.target.value.replace(/\D/g, '') // Remove non-digits
+    let value = event.target.value.replace(/\D/g, '')
     
     if (value.length > 9) {
       value = value.slice(0, 9)

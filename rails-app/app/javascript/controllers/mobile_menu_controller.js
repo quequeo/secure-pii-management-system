@@ -1,6 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Handles mobile menu toggle
 export default class extends Controller {
   static targets = ["menu"]
 

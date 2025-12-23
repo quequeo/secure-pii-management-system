@@ -1,6 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Provides real-time form validation feedback
 export default class extends Controller {
   static targets = ["field", "error"]
   

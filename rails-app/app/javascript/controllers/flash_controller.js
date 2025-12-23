@@ -1,6 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Auto-hides flash messages after a delay
 export default class extends Controller {
   static values = { delay: { type: Number, default: 5000 } }
 
