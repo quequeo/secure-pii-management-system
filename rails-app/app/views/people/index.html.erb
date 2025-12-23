@@ -1,58 +1,8 @@
 <div class="max-w-7xl mx-auto p-6">
   <div class="flex justify-between items-center mb-6">
     <h1 class="text-3xl font-bold text-gray-900">PII Records</h1>
-    <%= link_to "New PII Record", new_person_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow transition duration-150 ease-in-out" %>
+    <%= render ButtonComponent.new(text: "New PII Record", href: new_person_path) %>
   </div>
 
-  <% if @people.any? %>
-    <div class="bg-white shadow-md rounded-lg overflow-hidden">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-          <tr>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SSN</th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">City, State</th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <% @people.each do |person| %>
-            <tr class="hover:bg-gray-50">
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900"><%= person.full_name %></div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900 font-mono"><%= person.masked_ssn %></div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900"><%= person.city %>, <%= person.state %></div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                <%= person.created_at.strftime("%B %d, %Y") %>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <%= link_to "View", person, class: "text-blue-600 hover:text-blue-900" %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="mt-4 text-sm text-gray-600">
-      Showing <%= @people.count %> <%= "record".pluralize(@people.count) %>
-    </div>
-  <% else %>
-    <div class="bg-gray-50 rounded-lg p-12 text-center">
-      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-      </svg>
-      <h3 class="mt-2 text-lg font-medium text-gray-900">No PII records</h3>
-      <p class="mt-1 text-sm text-gray-500">Get started by creating a new PII record.</p>
-      <div class="mt-6">
-        <%= link_to "New PII Record", new_person_path, class: "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
-      </div>
-    </div>
-  <% end %>
+  <%= render "people_list", people: @people %>
 </div>

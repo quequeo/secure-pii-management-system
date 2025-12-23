@@ -192,5 +192,15 @@ RSpec.describe "People", type: :request do
       get person_path(person)
       expect(response.body).to include(person.state)
     end
+
+    it "redirects to index when person not found" do
+      get person_path(id: 99999)
+      expect(response).to redirect_to(people_path)
+    end
+
+    it "sets alert flash when person not found" do
+      get person_path(id: 99999)
+      expect(flash[:alert]).to eq("Person not found.")
+    end
   end
 end

@@ -22,9 +22,55 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+  <body class="bg-gray-50 min-h-screen flex flex-col">
+    <nav class="bg-white shadow-sm border-b border-gray-200" data-controller="mobile-menu">
+      <div class="container mx-auto px-4 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <%= link_to root_path, class: "text-xl md:text-2xl font-bold text-blue-600 hover:text-blue-700 transition", data: { turbo_frame: "_top" } do %>
+              <span class="flex items-center gap-2">
+                <span class="text-2xl">🔒</span>
+                <span class="hidden sm:inline">Secure PII System</span>
+                <span class="sm:hidden">PII System</span>
+              </span>
+            <% end %>
+          </div>
+          
+          <!-- Desktop Navigation -->
+          <div class="hidden md:flex items-center space-x-4">
+            <%= link_to "All Records", people_path, class: "text-gray-600 hover:text-gray-900 font-medium transition", data: { turbo_frame: "_top" } %>
+            <%= link_to "New Record", new_person_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition", data: { turbo_frame: "_top" } %>
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <button data-action="click->mobile-menu#toggle" class="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div data-mobile-menu-target="menu" class="hidden md:hidden mt-4 pt-4 border-t border-gray-200 space-y-2">
+          <%= link_to "All Records", people_path, 
+              class: "block text-gray-600 hover:text-gray-900 font-medium py-2 transition", 
+              data: { turbo_frame: "_top", action: "click->mobile-menu#close" } %>
+          <%= link_to "New Record", new_person_path, 
+              class: "block bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition text-center", 
+              data: { turbo_frame: "_top", action: "click->mobile-menu#close" } %>
+        </div>
+      </div>
+    </nav>
+
+    <main class="flex-1 container mx-auto px-4 py-8">
       <%= yield %>
     </main>
+
+    <footer class="bg-white border-t border-gray-200 mt-auto">
+      <div class="container mx-auto px-4 py-6 text-center text-gray-600 text-sm">
+        <p class="hidden sm:block">Secure PII Management System - Built with Rails <%= Rails.version %> + Hotwire</p>
+        <p class="sm:hidden">Rails <%= Rails.version %> + Hotwire</p>
+      </div>
+    </footer>
   </body>
 </html>
