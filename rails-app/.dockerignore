@@ -7,4 +7,3 @@ tmp/*
 .env.local
 node_modules/
 coverage/
-spec/

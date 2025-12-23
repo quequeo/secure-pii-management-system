@@ -59,9 +59,9 @@ services:
     volumes:
       - ./rails-app:/app
       - bundle_cache:/usr/local/bundle
-    command: sh -c "bin/rails db:prepare && bin/rails tailwindcss:build && bin/rails server -b 0.0.0.0"
+    command: ["bin/docker-entrypoint.sh"]
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      test: ["CMD", "curl", "-f", "http://localhost:3000/up"]
       interval: 30s
       timeout: 10s
       retries: 3
