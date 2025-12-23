@@ -421,4 +421,96 @@ RSpec.describe "People", type: :request do
       end
     end
   end
+
+  describe "audit logging" do
+    let(:person) { create(:person) }
+    let(:valid_attributes) do
+      {
+        first_name: "John",
+        middle_name: "Michael",
+        last_name: "Doe",
+        ssn: "123-45-6789",
+        street_address_1: "123 Main St",
+        city: "New York",
+        state: "NY",
+        zip_code: "10001"
+      }
+    end
+
+    describe "POST /people" do
+      it "creates an audit log on successful create" do
+        expect {
+          post people_path, params: { person: valid_attributes }
+        }.to change(AuditLog, :count).by(1)
+      end
+
+      it "logs create action" do
+        post people_path, params: { person: valid_attributes }
+        expect(AuditLog.last.action).to eq('create')
+      end
+
+      it "does not create audit log on failed create" do
+        invalid_attributes = valid_attributes.merge(first_name: '')
+        expect {
+          post people_path, params: { person: invalid_attributes }
+        }.not_to change(AuditLog, :count)
+      end
+    end
+
+    describe "GET /people/:id" do
+      it "creates an audit log on view" do
+        expect {
+          get person_path(person)
+        }.to change(AuditLog, :count).by(1)
+      end
+
+      it "logs view action" do
+        get person_path(person)
+        expect(AuditLog.last.action).to eq('view')
+      end
+
+      it "associates log with viewed person" do
+        get person_path(person)
+        expect(AuditLog.last.auditable).to eq(person)
+      end
+    end
+
+    describe "PATCH /people/:id" do
+      it "creates an audit log on successful update" do
+        expect {
+          patch person_path(person), params: { person: { first_name: 'Jane' } }
+        }.to change(AuditLog, :count).by(1)
+      end
+
+      it "logs update action" do
+        patch person_path(person), params: { person: { first_name: 'Jane' } }
+        expect(AuditLog.last.action).to eq('update')
+      end
+
+      it "does not create audit log on failed update" do
+        expect {
+          patch person_path(person), params: { person: { first_name: '' } }
+        }.not_to change(AuditLog, :count)
+      end
+    end
+
+    describe "DELETE /people/:id" do
+      it "creates an audit log on destroy" do
+        person
+        expect {
+          delete person_path(person)
+        }.to change(AuditLog, :count).by(1)
+      end
+
+      it "logs destroy action" do
+        delete person_path(person)
+        expect(AuditLog.last.action).to eq('destroy')
+      end
+
+      it "captures IP address" do
+        delete person_path(person)
+        expect(AuditLog.last.ip_address).to be_present
+      end
+    end
+  end
 end
