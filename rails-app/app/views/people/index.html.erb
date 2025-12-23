@@ -4,35 +4,5 @@
     <%= render ButtonComponent.new(text: "New PII Record", href: new_person_path) %>
   </div>
 
-  <% if @people.any? %>
-    <div class="bg-white shadow-md rounded-lg overflow-hidden">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-          <tr>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SSN</th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">City, State</th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <% @people.each do |person| %>
-            <%= render PersonCardComponent.new(person: person) %>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="mt-4 text-sm text-gray-600">
-      Showing <%= @people.count %> <%= "record".pluralize(@people.count) %>
-    </div>
-  <% else %>
-    <%= render EmptyStateComponent.new(
-      title: "No PII records",
-      description: "Get started by creating a new PII record.",
-      action_text: "New PII Record",
-      action_path: new_person_path
-    ) %>
-  <% end %>
+  <%= render "people_list", people: @people %>
 </div>

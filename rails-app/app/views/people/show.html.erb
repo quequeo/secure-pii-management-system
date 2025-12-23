@@ -1,11 +1,13 @@
 <div class="max-w-3xl mx-auto p-6">
-  <div class="mb-6">
-    <%= link_to "← Back to List", people_path, class: "text-blue-600 hover:text-blue-800 text-sm font-medium" %>
-  </div>
+  <%= turbo_frame_tag "person_#{@person.id}", target: "_top" do %>
+    <div class="mb-6">
+      <%= link_to "← Back to List", people_path, data: { turbo_frame: "_top" }, class: "text-blue-600 hover:text-blue-800 text-sm font-medium" %>
+    </div>
 
   <% if flash[:notice] %>
-    <div class="bg-green-50 border border-green-200 text-green-800 rounded-lg p-4 mb-6">
-      <%= flash[:notice] %>
+    <div data-controller="flash" data-flash-delay-value="5000" class="bg-green-50 border border-green-200 text-green-800 rounded-lg p-4 mb-6 flex items-center justify-between">
+      <span><%= flash[:notice] %></span>
+      <button data-action="click->flash#dismiss" class="text-green-600 hover:text-green-800 font-bold ml-4">✕</button>
     </div>
   <% end %>
 
@@ -100,4 +102,5 @@
       <%= render ButtonComponent.new(text: "Back to List", href: people_path, variant: :secondary) %>
     </div>
   </div>
+  <% end %>
 </div>
