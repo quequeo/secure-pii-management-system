@@ -2,6 +2,8 @@
 
 > **Language**: All content in this file MUST be in English. Keep all instructions, comments, and documentation in English for consistency.
 
+> **IMPORTANT**: DO NOT make commits unless explicitly requested by the user. Only stage files or prepare changes, but wait for user confirmation before committing.
+
 ## Project Context
 
 This is a **take-home engineering challenge** for a job application. The goal is to build a secure PII management system with:
@@ -82,12 +84,14 @@ Rails form must collect:
 - **Java**: Spring Boot best practices, JUnit 5 for tests
 - **Keep it simple**: Functional over beautiful UI
 - **No React**: Use Rails views (ERB) with Tailwind CSS
+- **No section comments**: Do NOT add comments like `# Validations`, `# Associations`, etc. Code should be self-documenting
 
 ### Testing Strategy
 - Write tests BEFORE or ALONGSIDE implementation
 - Test both happy paths and error cases
 - Integration tests for service-to-service communication
 - Mock external service calls when appropriate
+- **One expectation per test**: Each `it` block MUST have only ONE `expect` statement. Split into multiple tests if needed
 
 ### Common Patterns
 - Rails calls Java service for SSN validation before saving
