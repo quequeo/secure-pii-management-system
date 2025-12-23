@@ -48,7 +48,8 @@ class SsnValidationService
     if data["valid"]
       { valid: true }
     else
-      { valid: false, error: data["errorMessage"] || "Invalid SSN" }
+      error_message = parse_error_messages(data)
+      { valid: false, error: error_message }
     end
   rescue JSON::ParserError => e
     raise ServiceUnavailableError, "Invalid JSON response: #{e.message}"
@@ -56,9 +57,20 @@ class SsnValidationService
 
   def parse_error_response(response)
     data = JSON.parse(response.body)
-    { valid: false, error: data["errorMessage"] || "Invalid SSN format" }
+    error_message = parse_error_messages(data)
+    { valid: false, error: error_message }
   rescue JSON::ParserError
     { valid: false, error: "Invalid SSN format" }
+  end
+
+  def parse_error_messages(data)
+    if data["errors"]&.any?
+      data["errors"].join(", ")
+    elsif data["errorMessage"]
+      data["errorMessage"]
+    else
+      "Invalid SSN format"
+    end
   end
 end
 
