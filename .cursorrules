@@ -1,10 +1,12 @@
 # Cursor AI Instructions - Secure PII Management System Challenge
 
+> **Language**: All content in this file MUST be in English. Keep all instructions, comments, and documentation in English for consistency.
+
 ## Project Context
 
 This is a **take-home engineering challenge** for a job application. The goal is to build a secure PII management system with:
 
-- **Rails application** (Ruby on Rails 7.1): Web interface for collecting and displaying PII data
+- **Rails application** (Ruby on Rails 8): Web interface for collecting and displaying PII data
 - **Java microservice** (Java 17 + Spring Boot 3.2): SSN validation service per SSA standards
 
 **Working Methodology**: Small, focused PRs - each implementing a single feature with tests.
@@ -191,118 +193,118 @@ When suggesting new features, consider what's already been implemented in previo
 
 ## 📊 DETAILED PROJECT CHECKLIST
 
-### ✅ COMPLETADO (11 PRs)
+### ✅ COMPLETED (11 PRs)
 
-#### Infraestructura y Setup
+#### Infrastructure & Setup
 - [x] PR #1 - Initial repository setup (README, .gitignore, folder structure)
 - [x] PR #2 - Java Spring Boot project structure (pom.xml, application setup)
-- [x] PR #5 - Copilot instructions (documentación para AI)
+- [x] PR #5 - Copilot instructions (documentation for AI)
 - [x] PR #9 - Dockerfile for Java service
 - [x] PR #10 - Rails 8 application with RSpec setup
 - [x] PR #11 - Challenge instructions (README + .cursorrules)
 
 #### Java Microservice - SSN Validation
 - [x] PR #3 - SSN validation DTOs (SsnValidationRequest, SsnValidationResponse)
-- [x] PR #4 - SSN validation service con reglas SSA
-- [x] PR #6 - Unit tests para SSN validation (>70% coverage)
+- [x] PR #4 - SSN validation service with SSA rules
+- [x] PR #6 - Unit tests for SSN validation (>70% coverage)
 - [x] PR #7 - SSN validation controller (REST endpoint)
-- [x] PR #8 - Health check endpoint con tests
+- [x] PR #8 - Health check endpoint with tests
 
-**Java Service Status**: ✅ COMPLETO con >70% cobertura de tests
+**Java Service Status**: ✅ COMPLETE with >70% test coverage
 
 ---
 
-### 🚧 PENDIENTE - Rails Application & Integration
+### 🚧 PENDING - Rails Application & Integration
 
 #### 1. Database & Models (Rails)
-- [ ] Configurar PostgreSQL en Rails
-- [ ] Crear modelo Person o PiiRecord con campos:
+- [ ] Configure PostgreSQL in Rails
+- [ ] Create Person or PiiRecord model with fields:
   - first_name, middle_name, last_name
-  - ssn (encriptado)
+  - ssn (encrypted)
   - street_address_1, street_address_2
   - city, state, zip_code
-- [ ] Configurar encriptación de SSN (Rails encrypted attributes o attr_encrypted)
-- [ ] Migrations con índices y constraints
-- [ ] Validaciones del modelo en Rails
-- [ ] Tests de modelo (RSpec)
+- [ ] Configure SSN encryption (Rails encrypted attributes or attr_encrypted)
+- [ ] Migrations with indexes and constraints
+- [ ] Model validations in Rails
+- [ ] Model tests (RSpec)
 
 #### 2. PII Collection Form (Rails Views)
-- [ ] Controller para PII (PeopleController o similar)
-- [ ] Vista new.html.erb con formulario que incluya:
+- [ ] PII Controller (PeopleController or similar)
+- [ ] new.html.erb view with form including:
   - First Name, Middle Name, Last Name
   - Middle Name Override (checkbox)
-  - SSN (formato XXX-XX-XXXX)
+  - SSN (format XXX-XX-XXXX)
   - Address fields (street 1, street 2, city, state, ZIP)
-- [ ] Styling con Tailwind CSS
-- [ ] Validaciones client-side básicas
-- [ ] Tests de controller (RSpec request specs)
+- [ ] Styling with Tailwind CSS
+- [ ] Basic client-side validations
+- [ ] Controller tests (RSpec request specs)
 
 #### 3. Integration Rails ↔ Java
-- [ ] Servicio HTTP client en Rails para llamar al Java service
-- [ ] Integración en el controller: validar SSN antes de guardar
-- [ ] Manejo de errores cuando Java service no responde
-- [ ] Tests de integración (mock Java service responses)
-- [ ] Variable de entorno para URL del Java service
+- [ ] HTTP client service in Rails to call Java service
+- [ ] Controller integration: validate SSN before saving
+- [ ] Error handling when Java service doesn't respond
+- [ ] Integration tests (mock Java service responses)
+- [ ] Environment variable for Java service URL
 
 #### 4. Display Page (Rails Views)
-- [ ] Vista index.html.erb con tabla de registros
-- [ ] Vista show.html.erb para ver un registro individual
-- [ ] Masking de SSN en helpers/presenters (***-**-1234)
-- [ ] Routing completo (routes.rb)
-- [ ] Tests de vistas (RSpec view specs o feature specs)
+- [ ] index.html.erb view with records table
+- [ ] show.html.erb view to display individual record
+- [ ] SSN masking in helpers/presenters (***-**-1234)
+- [ ] Complete routing (routes.rb)
+- [ ] View tests (RSpec view specs or feature specs)
 
 #### 5. Docker Compose & Infrastructure
-- [ ] docker-compose.yml con:
+- [ ] docker-compose.yml with:
   - PostgreSQL service
   - Java service
   - Rails service
   - Network configuration
-- [ ] Health checks en docker-compose
-- [ ] .env.example con variables de entorno necesarias
-- [ ] Volúmenes para persistencia de datos
+- [ ] Health checks in docker-compose
+- [ ] .env.example with required environment variables
+- [ ] Volumes for data persistence
 
 #### 6. Documentation
-- [ ] ARCHITECTURE.md con:
-  - Diagrama de arquitectura (ASCII art)
-  - Flujo de comunicación Rails ↔ Java
-  - Schema de base de datos
-  - Decisiones de diseño de seguridad
-- [ ] Actualizar README.md con:
-  - Quick start con Docker Compose
-  - Instrucciones de setup local
-  - Cómo correr tests
-  - Variables de entorno
-  - Assumptions y trade-offs
+- [ ] ARCHITECTURE.md with:
+  - Architecture diagram (ASCII art)
+  - Rails ↔ Java communication flow
+  - Database schema
+  - Security design decisions
+- [ ] Update README.md with:
+  - Quick start with Docker Compose
+  - Local setup instructions
+  - How to run tests
+  - Environment variables
+  - Assumptions and trade-offs
   - Time tracking
 
 #### 7. Testing & Coverage
-- [ ] Verificar >70% coverage en Rails (SimpleCov)
-- [ ] Tests de encriptación/desencriptación
-- [ ] Tests de masking de SSN
-- [ ] Tests end-to-end (opcional con Capybara)
+- [ ] Verify >70% coverage in Rails (SimpleCov)
+- [ ] Encryption/decryption tests
+- [ ] SSN masking tests
+- [ ] End-to-end tests (optional with Capybara)
 
 ---
 
-### 🎯 OPCIONAL - Bonus Features (si hay tiempo)
+### 🎯 OPTIONAL - Bonus Features (if time permits)
 
-- [ ] Edit/Delete functionality para registros
-- [ ] Input sanitization avanzado
-- [ ] Audit logging para acceso a PII
-- [ ] API rate limiting en Java service
+- [ ] Edit/Delete functionality for records
+- [ ] Advanced input sanitization
+- [ ] Audit logging for PII access
+- [ ] API rate limiting in Java service
 - [ ] CI/CD pipeline (GitHub Actions)
-- [ ] Hotwire/Turbo para UI updates
+- [ ] Hotwire/Turbo for UI updates
 
 ---
 
-## 📈 Progreso General
+## 📈 General Progress
 
-**Completado**: ~40%
-- ✅ Java microservice completo (100%)
+**Completed**: ~40%
+- ✅ Java microservice complete (100%)
 - ✅ Rails setup (10%)
 - 🚧 Rails features (0%)
 - 🚧 Integration (0%)
 - 🚧 Docker Compose (0%)
 - 🚧 Documentation (20%)
 
-**Siguiente paso recomendado**: Empezar con la configuración de PostgreSQL y el modelo de datos en Rails.
+**Recommended next step**: Start with PostgreSQL configuration and Rails data model.
 
