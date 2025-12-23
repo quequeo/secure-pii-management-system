@@ -366,15 +366,165 @@ This project follows a **small PR methodology**:
 
 ---
 
-## 🤖 AI Assistance
+## ⏱️ Time Breakdown
 
-This project was developed with AI assistance (Cursor + Claude Sonnet 4.5):
-- **Code Generation**: Boilerplate, tests, validation logic
-- **Test Coverage**: Comprehensive test cases for SSN validation
-- **Documentation**: README, comments, architectural decisions
-- **Code Review**: Best practices and security considerations
+**Total Time**: ~20-24 hours (distributed over 3 days)  
+**Development Period**: December 21-23, 2024  
+**Commits**: 71 | **PRs**: 23 | **Lines of Code**: ~2,500 (Ruby + Java)
 
-Context for AI is maintained in `.cursorrules` for consistency across development sessions.
+### 1. Technical Setup & Infrastructure (~5 hours)
+- **Repository setup and project structure** (0.5 hours)
+  - Initial monorepo setup, .gitignore, folder structure
+- **Java microservice foundation** (1.5 hours)
+  - Spring Boot 3.2 setup, Maven configuration
+  - SSN validation service with SSA rules implementation
+  - DTOs (SsnValidationRequest, SsnValidationResponse)
+- **Rails 8 application setup** (1.5 hours)
+  - Rails new, RSpec configuration, PostgreSQL setup
+  - ActiveRecord::Encryption configuration
+  - Environment variables with dotenv-rails
+- **Docker & Docker Compose** (1.5 hours)
+  - Dockerfiles for Rails and Java services
+  - docker-compose.yml with health checks and service dependencies
+  - Debugging Alpine vs bash, volume caching issues
+
+### 2. Core Functional Development (~6 hours)
+- **Database schema and Person model** (1.5 hours)
+  - Migration with proper indexes and constraints
+  - Model validations (presence, format, length)
+  - Custom SSN validation calling Java service
+  - Encryption setup for SSN field
+- **PII collection form** (2 hours)
+  - PeopleController with CRUD operations
+  - Form view with all required fields
+  - Middle Name Override checkbox logic
+  - Tailwind CSS styling
+  - Error handling and display
+- **Display pages and SSN masking** (1.5 hours)
+  - Index view with records table
+  - Show view with detailed information
+  - Masked SSN implementation (`***-**-1234`)
+  - Responsive design (mobile + desktop)
+- **Rails-Java integration** (1 hour)
+  - SsnValidationService HTTP client
+  - Error handling (timeouts, connection failures)
+  - Integration in Person model validation
+
+### 3. Testing & Quality Assurance (~4 hours)
+- **RSpec test suite** (2.5 hours)
+  - Model specs (validations, encryption, helper methods)
+  - Request specs for all controller actions
+  - Service specs with WebMock for Java integration
+  - Factory setup with Faker
+  - Achieving 100% code coverage
+- **Java tests** (1 hour)
+  - JUnit 5 tests for SSN validation logic
+  - Controller integration tests
+  - JaCoCo configuration for coverage reporting
+- **Debugging and edge cases** (0.5 hours)
+  - SSN format edge cases (with/without hyphens)
+  - RecordNotFound error handling
+  - Presenter defensive coding
+
+### 4. Bonus Features (~5 hours)
+- **CI/CD Pipeline** (1 hour)
+  - GitHub Actions workflows (Rails, Java, CI checks)
+  - Coverage enforcement, security checks
+  - Docker build verification
+- **Frontend Modernization** (3 hours)
+  - Hotwire/Turbo integration for SPA-like navigation
+  - ViewComponents (Button, PersonCard, EmptyState, FormField)
+  - Presenter pattern (BasePresenter, PersonPresenter)
+  - Stimulus controllers (SSN format, form validation, flash, mobile menu)
+  - Turbo Frames for scoped updates
+- **Test Coverage Reporting** (0.5 hours)
+  - SimpleCov setup and configuration
+  - Coverage groups for different layers
+  - 100% coverage achievement
+- **Responsive Design** (0.5 hours)
+  - Mobile-first approach with Tailwind
+  - Separate desktop/mobile layouts
+
+### 5. Documentation (~3 hours)
+- **README.md** (1 hour)
+  - Quick start guide with Docker Compose
+  - Setup instructions for local development
+  - Testing instructions with coverage details
+  - Environment variables documentation
+  - Implementation status checklist
+  - Assumptions and trade-offs (Rails 8 decision)
+- **ARCHITECTURE.md** (1.5 hours)
+  - System architecture diagram (ASCII art)
+  - Component details with responsibilities
+  - Communication flow diagrams
+  - Security implementation details
+  - Key design decisions and rationale
+  - Technology choices justification
+  - 650+ lines of technical documentation
+- **Code comments and inline docs** (0.5 hours)
+  - Controller comments for clarity
+  - Model validation explanations
+  - Complex logic documentation
+
+### 6. Refinement & Polish (~1-2 hours)
+- **Code review and refactoring** (1 hour)
+  - Copilot review feedback implementation
+  - Controller refactoring (before_action, rescue_from)
+  - Removing console.log statements
+  - Presenter defensive coding improvements
+- **Bug fixes and iterations** (0.5-1 hour)
+  - Turbo Frame navigation fix
+  - Coverage drops investigation
+  - Bundler gem issues in Docker
+  - Small UI/UX improvements
+
+---
+
+### AI Assistance Impact
+
+**Tools Used**: Cursor IDE + Claude Sonnet 4.5
+
+**Time Savings**: ~40-50% (estimated 35-40 hours without AI)
+
+**AI Contributions**:
+- Code generation for boilerplate (controllers, models, tests)
+- Test case suggestions and edge case identification
+- Documentation writing and structuring
+- Debugging assistance (Docker issues, test failures)
+- Best practices and security recommendations
+- Architecture pattern suggestions (ViewComponents, Presenters)
+
+**Human Contributions**:
+- System design and architecture decisions
+- Business logic and validation rules
+- Integration strategy (Rails ↔ Java)
+- Code review and quality assurance
+- Documentation review and refinement
+- Final testing and verification
+
+**Working Methodology**: Small, focused PRs (23 total) with tests for each feature, allowing for iterative development and easy code review.
+
+---
+
+## 🤖 AI Assistance (Continued)
+
+**Context Management**: AI context is maintained in `.cursorrules` for consistency across development sessions, including:
+- Project requirements and constraints
+- Coding standards (one expect per test, no section comments)
+- PR/branch workflow guidelines
+- Detailed project checklist with completion status
+
+**Effectiveness**: AI was most valuable for:
+- ✅ Rapid prototyping and boilerplate reduction
+- ✅ Comprehensive test coverage suggestions
+- ✅ Documentation structure and clarity
+- ✅ Debugging complex integration issues
+
+**Limitations**: Human oversight required for:
+- ⚠️ System architecture decisions
+- ⚠️ Security implementation choices
+- ⚠️ Trade-off evaluation (Rails 8 vs 5.0.x)
+- ⚠️ Final code review and quality assurance
 
 ---
 
