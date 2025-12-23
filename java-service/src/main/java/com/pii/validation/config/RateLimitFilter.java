@@ -51,11 +51,9 @@ public class RateLimitFilter implements Filter {
     }
 
     private String getClientIP(HttpServletRequest request) {
-        String xfHeader = request.getHeader("X-Forwarded-For");
-        if (xfHeader == null) {
-            return request.getRemoteAddr();
-        }
-        return xfHeader.split(",")[0];
+        // For internal service-to-service traffic, rely on the actual remote address
+        // instead of trusting X-Forwarded-For, which can be spoofed by clients.
+        // This prevents rate limit bypass attacks.
+        return request.getRemoteAddr();
     }
 }
-

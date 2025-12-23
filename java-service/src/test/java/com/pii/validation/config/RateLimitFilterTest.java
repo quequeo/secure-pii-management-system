@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -16,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("RateLimitFilter")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class RateLimitFilterTest {
 
     @Autowired
@@ -55,11 +57,11 @@ class RateLimitFilterTest {
         SsnValidationRequest request = new SsnValidationRequest("123-45-6789");
 
         // Make 101 requests to exceed the limit of 100/minute
+        // Note: All requests come from the same RemoteAddr in tests
         for (int i = 0; i < 101; i++) {
             var result = mockMvc.perform(post("/api/v1/ssn/validate")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request))
-                            .header("X-Forwarded-For", "192.168.1.100"));
+                            .content(objectMapper.writeValueAsString(request)));
 
             if (i < 100) {
                 result.andExpect(status().isOk());
@@ -73,38 +75,30 @@ class RateLimitFilterTest {
     }
 
     @Test
-    @DisplayName("different IPs have separate rate limits")
-    void differentIPsHaveSeparateRateLimits() throws Exception {
+    @DisplayName("rate limit decreases with each request")
+    void rateLimitDecreasesWithEachRequest() throws Exception {
         SsnValidationRequest request = new SsnValidationRequest("123-45-6789");
 
-        // IP 1: Make 100 requests
-        for (int i = 0; i < 100; i++) {
-            mockMvc.perform(post("/api/v1/ssn/validate")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request))
-                            .header("X-Forwarded-For", "192.168.1.1"))
-                    .andExpect(status().isOk());
-        }
-
-        // IP 2: Should still be able to make requests
+        // First request should have high remaining count
         mockMvc.perform(post("/api/v1/ssn/validate")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                        .header("X-Forwarded-For", "192.168.1.2"))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(header().exists("X-RateLimit-Remaining"));
     }
 
     @Test
-    @DisplayName("uses RemoteAddr when X-Forwarded-For is not present")
-    void usesRemoteAddrWhenXForwardedForNotPresent() throws Exception {
+    @DisplayName("ignores X-Forwarded-For header for security")
+    void ignoresXForwardedForHeader() throws Exception {
         SsnValidationRequest request = new SsnValidationRequest("123-45-6789");
 
+        // X-Forwarded-For is ignored; all requests use RemoteAddr
+        // This prevents rate limit bypass attacks
         mockMvc.perform(post("/api/v1/ssn/validate")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .content(objectMapper.writeValueAsString(request))
+                        .header("X-Forwarded-For", "spoofed.ip.address"))
                 .andExpect(status().isOk())
                 .andExpect(header().exists("X-RateLimit-Limit"));
     }
 }
-

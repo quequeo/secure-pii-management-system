@@ -27,9 +27,9 @@ The service uses the **Bucket4j** library which implements a token bucket algori
 
 ### IP Detection
 
-The filter detects client IPs using:
-1. `X-Forwarded-For` header (for requests behind proxies/load balancers)
-2. `RemoteAddr` (fallback when X-Forwarded-For is not present)
+**Security Note**: For internal service-to-service communication, the filter uses only `request.getRemoteAddr()` to identify clients. This prevents rate limit bypass attacks where malicious clients could spoof the `X-Forwarded-For` header with different IPs on each request.
+
+If you're deploying behind a trusted proxy/load balancer, you would need to modify `getClientIP()` to validate the proxy source before trusting `X-Forwarded-For`.
 
 ## Response Headers
 
@@ -159,9 +159,23 @@ mvn test -Dtest=RateLimitFilterTest
 
 ## Performance Considerations
 
-- **Memory Usage**: Each unique IP address creates a bucket in memory (ConcurrentHashMap)
-- **Scalability**: For distributed systems, consider Redis-backed buckets using `bucket4j-redis`
-- **Cleanup**: Buckets are held in memory indefinitely; implement periodic cleanup for production
+### Memory Management
+
+The service uses **Caffeine Cache** with intelligent eviction policies:
+
+- **Idle Eviction**: Buckets for IPs idle for 15+ minutes are automatically removed
+- **Maximum Size**: Hard cap of 10,000 unique IPs prevents unbounded memory growth
+- **LRU Eviction**: When max size is reached, least recently used buckets are evicted
+
+This ensures memory usage remains bounded even under high traffic from many IPs.
+
+### Scalability
+
+- **Single Instance**: Caffeine cache works perfectly for single-instance deployments
+- **Distributed Systems**: For multi-instance deployments, consider:
+  - Redis-backed buckets using `bucket4j-redis`
+  - Shared rate limit state across instances
+  - Hazelcast or other distributed caches
 
 ## Security
 
