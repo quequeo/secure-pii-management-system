@@ -126,3 +126,122 @@ Check git history for completed PRs. Each PR should be focused and include:
 
 When suggesting new features, consider what's already been implemented in previous PRs.
 
+---
+
+## 📊 DETAILED PROJECT CHECKLIST
+
+### ✅ COMPLETADO (11 PRs)
+
+#### Infraestructura y Setup
+- [x] PR #1 - Initial repository setup (README, .gitignore, folder structure)
+- [x] PR #2 - Java Spring Boot project structure (pom.xml, application setup)
+- [x] PR #5 - Copilot instructions (documentación para AI)
+- [x] PR #9 - Dockerfile for Java service
+- [x] PR #10 - Rails 8 application with RSpec setup
+- [x] PR #11 - Challenge instructions (README + .cursorrules)
+
+#### Java Microservice - SSN Validation
+- [x] PR #3 - SSN validation DTOs (SsnValidationRequest, SsnValidationResponse)
+- [x] PR #4 - SSN validation service con reglas SSA
+- [x] PR #6 - Unit tests para SSN validation (>70% coverage)
+- [x] PR #7 - SSN validation controller (REST endpoint)
+- [x] PR #8 - Health check endpoint con tests
+
+**Java Service Status**: ✅ COMPLETO con >70% cobertura de tests
+
+---
+
+### 🚧 PENDIENTE - Rails Application & Integration
+
+#### 1. Database & Models (Rails)
+- [ ] Configurar PostgreSQL en Rails
+- [ ] Crear modelo Person o PiiRecord con campos:
+  - first_name, middle_name, last_name
+  - ssn (encriptado)
+  - street_address_1, street_address_2
+  - city, state, zip_code
+- [ ] Configurar encriptación de SSN (Rails encrypted attributes o attr_encrypted)
+- [ ] Migrations con índices y constraints
+- [ ] Validaciones del modelo en Rails
+- [ ] Tests de modelo (RSpec)
+
+#### 2. PII Collection Form (Rails Views)
+- [ ] Controller para PII (PeopleController o similar)
+- [ ] Vista new.html.erb con formulario que incluya:
+  - First Name, Middle Name, Last Name
+  - Middle Name Override (checkbox)
+  - SSN (formato XXX-XX-XXXX)
+  - Address fields (street 1, street 2, city, state, ZIP)
+- [ ] Styling con Tailwind CSS
+- [ ] Validaciones client-side básicas
+- [ ] Tests de controller (RSpec request specs)
+
+#### 3. Integration Rails ↔ Java
+- [ ] Servicio HTTP client en Rails para llamar al Java service
+- [ ] Integración en el controller: validar SSN antes de guardar
+- [ ] Manejo de errores cuando Java service no responde
+- [ ] Tests de integración (mock Java service responses)
+- [ ] Variable de entorno para URL del Java service
+
+#### 4. Display Page (Rails Views)
+- [ ] Vista index.html.erb con tabla de registros
+- [ ] Vista show.html.erb para ver un registro individual
+- [ ] Masking de SSN en helpers/presenters (***-**-1234)
+- [ ] Routing completo (routes.rb)
+- [ ] Tests de vistas (RSpec view specs o feature specs)
+
+#### 5. Docker Compose & Infrastructure
+- [ ] docker-compose.yml con:
+  - PostgreSQL service
+  - Java service
+  - Rails service
+  - Network configuration
+- [ ] Health checks en docker-compose
+- [ ] .env.example con variables de entorno necesarias
+- [ ] Volúmenes para persistencia de datos
+
+#### 6. Documentation
+- [ ] ARCHITECTURE.md con:
+  - Diagrama de arquitectura (ASCII art)
+  - Flujo de comunicación Rails ↔ Java
+  - Schema de base de datos
+  - Decisiones de diseño de seguridad
+- [ ] Actualizar README.md con:
+  - Quick start con Docker Compose
+  - Instrucciones de setup local
+  - Cómo correr tests
+  - Variables de entorno
+  - Assumptions y trade-offs
+  - Time tracking
+
+#### 7. Testing & Coverage
+- [ ] Verificar >70% coverage en Rails (SimpleCov)
+- [ ] Tests de encriptación/desencriptación
+- [ ] Tests de masking de SSN
+- [ ] Tests end-to-end (opcional con Capybara)
+
+---
+
+### 🎯 OPCIONAL - Bonus Features (si hay tiempo)
+
+- [ ] Edit/Delete functionality para registros
+- [ ] Input sanitization avanzado
+- [ ] Audit logging para acceso a PII
+- [ ] API rate limiting en Java service
+- [ ] CI/CD pipeline (GitHub Actions)
+- [ ] Hotwire/Turbo para UI updates
+
+---
+
+## 📈 Progreso General
+
+**Completado**: ~40%
+- ✅ Java microservice completo (100%)
+- ✅ Rails setup (10%)
+- 🚧 Rails features (0%)
+- 🚧 Integration (0%)
+- 🚧 Docker Compose (0%)
+- 🚧 Documentation (20%)
+
+**Siguiente paso recomendado**: Empezar con la configuración de PostgreSQL y el modelo de datos en Rails.
+
