@@ -33,6 +33,7 @@ group :development, :test do
   gem "webmock"
   gem "dotenv-rails"
   gem "simplecov", require: false
+  gem "capybara"
 end
 
 group :development do
