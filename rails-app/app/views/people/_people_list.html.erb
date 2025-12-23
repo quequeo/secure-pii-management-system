@@ -66,10 +66,14 @@
                 aria: { label: "Edit record" } do %>
               <i class="ph ph-pencil-simple text-2xl"></i>
             <% end %>
-            <%= button_to person_path(person), 
-                method: :delete,
-                data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this record?" },
-                class: "bg-red-600 hover:bg-red-700 text-white p-3 rounded-lg transition",
+            <%= link_to "#",
+                data: { 
+                  controller: "delete-button",
+                  delete_button_url_value: person_path(person),
+                  delete_button_method_value: "delete",
+                  action: "click->delete-button#openModal"
+                },
+                class: "flex items-center justify-center bg-red-600 hover:bg-red-700 text-white p-3 rounded-lg transition",
                 title: "Delete",
                 aria: { label: "Delete record" } do %>
               <i class="ph ph-trash text-2xl"></i>

@@ -75,5 +75,10 @@
         <p class="sm:hidden">Rails <%= Rails.version %> + Hotwire</p>
       </div>
     </footer>
+
+    <%= render DeleteConfirmationModalComponent.new(
+      title: "Delete PII Record",
+      message: "Are you sure you want to permanently delete this PII record?"
+    ) %>
   </body>
 </html>
