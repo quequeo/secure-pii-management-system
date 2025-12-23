@@ -262,12 +262,50 @@ Context for AI is maintained in `.cursorrules` for consistency across developmen
 
 ## 📋 Assumptions & Trade-offs
 
-1. **Development Environment**: Docker Compose for production-like setup, but local dev works fine
-2. **Ruby/Rails Version**: Using Rails 8 (latest) instead of Rails 5.0.x mentioned in challenge
-3. **SSN Validation**: Implemented as separate microservice per requirements
-4. **Encryption**: Using Rails built-in encrypted attributes (modern approach)
-5. **Testing**: Focus on backend quality, frontend tests optional
-6. **PR Workflow**: Small, focused PRs for better review and learning
+### 1. Development Environment
+- Docker Compose for production-like setup, but local dev works fine
+- PostgreSQL running locally for development and testing
+
+### 2. Ruby/Rails Version: Rails 8 instead of Rails 5.0.x
+
+**Decision**: Using **Rails 8.0.2** (latest) instead of Rails 5.0.x mentioned in challenge.
+
+**Rationale**:
+- **Security**: Rails 5.0.x reached End-of-Life (EOL) in 2020, no longer receives security patches
+- **Built-in Encryption**: Rails 7+ provides `ActiveRecord::Encryption` out-of-the-box for SSN encryption
+  - No need for additional gems like `attr_encrypted`
+  - More secure with key rotation support
+  - Simpler implementation and maintenance
+- **Modern Tooling**: 
+  - Better test framework support (RSpec 7.x)
+  - Integrated Tailwind CSS support
+  - Improved developer experience
+- **Production Readiness**: Current stack is more maintainable long-term
+
+**Trade-off**: Acknowledges the challenge mentioned Rails 5.0.x preference, but prioritizes security and modern best practices. Demonstrates ability to make informed technical decisions.
+
+### 3. SSN Validation as Microservice
+- Implemented as separate Java Spring Boot service per requirements
+- Validates SSN per SSA standards before Rails saves to database
+- Loose coupling allows independent scaling and updates
+
+### 4. Encryption Strategy
+- **At Rest**: Rails `encrypts :ssn` for database encryption
+- **In Transit**: Documented HTTPS/TLS (not required for local dev)
+- **Display**: Masking in presentation layer (`***-**-1234`)
+- Encryption keys managed via Rails credentials/initializers
+
+### 5. Testing Approach
+- Focus on backend quality with >70% coverage
+- RSpec for Rails, JUnit 5 for Java
+- Integration tests for service-to-service communication
+- Frontend tests optional (challenge stated this explicitly)
+
+### 6. PR Workflow
+- Small, focused PRs (~10-15 PRs total)
+- Each PR implements one feature with tests
+- Better code review, easier to track progress
+- Demonstrates incremental development skills
 
 ---
 
