@@ -1,12 +1,6 @@
 # Secure PII Management System
 
-[![Rails Tests](https://github.com/quequeo/secure-pii-management-system/actions/workflows/rails-tests.yml/badge.svg)](https://github.com/quequeo/secure-pii-management-system/actions/workflows/rails-tests.yml)
-[![Java Tests](https://github.com/quequeo/secure-pii-management-system/actions/workflows/java-tests.yml/badge.svg)](https://github.com/quequeo/secure-pii-management-system/actions/workflows/java-tests.yml)
-[![CI](https://github.com/quequeo/secure-pii-management-system/actions/workflows/ci.yml/badge.svg)](https://github.com/quequeo/secure-pii-management-system/actions/workflows/ci.yml)
-
 A secure Rails 8 + Java microservices application for managing Personal Identifiable Information (PII) with encryption, SSN validation, and audit logging.
-
-> 📋 **Challenge**: This is a take-home engineering challenge. See [CHALLENGE.md](CHALLENGE.md) for requirements.
 
 ---
 
@@ -32,9 +26,8 @@ A secure Rails 8 + Java microservices application for managing Personal Identifi
 
 ### Prerequisites
 
-Choose one option:
-- **Option A**: Docker & Docker Compose (recommended)
-- **Option B**: Ruby 3.2+, Java 17+, Maven, PostgreSQL 14+
+- Docker & Docker Compose (recommended)
+- OR for local development: Ruby 3.2+, Java 17+, PostgreSQL 16+, Maven
 
 ### Setup from Fresh Clone
 
@@ -44,12 +37,12 @@ git clone <repository-url>
 cd secure-pii-management-system
 ```
 
-**2. Choose your setup:**
+**2. Setup:**
 
-#### Option A: Docker Compose (Recommended ✅)
+#### Docker Compose
 
 ```bash
-# Copy environment variables (optional - defaults work)
+# Copy environment variables
 cp .env.example .env
 
 # Start all services (PostgreSQL + Java + Rails)
@@ -64,57 +57,21 @@ docker-compose down
 
 That's it! Docker will handle everything: database setup, dependencies, and running all services.
 
-#### Option B: Local Development
-
-**1. Setup Java Service (Port 8080)**
-```bash
-cd java-service
-mvn clean install
-mvn spring-boot:run
-```
-
-**2. Setup Rails App (Port 3000)**
-```bash
-cd rails-app
-
-# Install dependencies
-bundle install
-
-# Configure environment
-cp .env.example .env
-# Edit .env and set: JAVA_SERVICE_URL=http://localhost:8080
-
-# Setup database
-rails db:create db:migrate
-
-# Start server
-rails server
-```
-
-**3. Access the app**
-```bash
-open http://localhost:3000
-```
-
 ---
 
 ## 🧪 Testing
 
 ```bash
-# Rails tests (99.63% coverage)
+# Rails tests
 cd rails-app && bundle exec rspec
 
-# Java tests (>70% coverage)
+# Java tests
 cd java-service && mvn test
-
-# Coverage reports
-open rails-app/coverage/index.html
-open java-service/target/site/jacoco/index.html
 ```
 
 **Test Results**:
-- Rails: 279 examples, 0 failures, **99.63% coverage**
-- Java: 27 tests, 0 failures, **>70% coverage**
+- Rails: **>70% coverage**
+- Java: **>70% coverage**
 
 ---
 
@@ -149,20 +106,19 @@ Per SSA standards:
 .
 ├── java-service/              # Spring Boot microservice
 │   ├── src/main/java/        # SSN validation service
-│   └── src/test/java/        # JUnit tests (27 tests)
+│   └── src/test/java/        # JUnit tests
 │
 ├── rails-app/                 # Rails 8 application
 │   ├── app/
 │   │   ├── models/           # Person (encrypted SSN), AuditLog
 │   │   ├── controllers/      # PeopleController, AuditLogsController
 │   │   ├── views/            # ERB templates + Turbo Frames
-│   │   ├── components/       # ViewComponents (5 components)
-│   │   ├── presenters/       # PersonPresenter (SSN masking)
-│   │   └── javascript/       # Stimulus controllers (6 controllers)
-│   └── spec/                 # RSpec tests (279 examples)
+│   │   ├── components/       # ViewComponents
+│   │   ├── presenters/       # PersonPresenter
+│   │   └── javascript/       # Stimulus controllers
+│   └── spec/                 # RSpec tests
 │
-├── ARCHITECTURE.md            # Detailed system design (651 lines)
-├── CHALLENGE.md               # Original requirements
+├── ARCHITECTURE.md            # Detailed system design
 └── docker-compose.yml         # Service orchestration
 ```
 
@@ -192,18 +148,65 @@ Per SSA standards:
 
 ---
 
-## 🛠️ Environment Variables
+## 📝 Assumptions & Trade-offs
 
-Both Docker and local setups come with `.env.example` files:
+### Rails 8 vs Rails 5.0.x
 
-- **Root**: `.env.example` → For Docker Compose
-- **Rails**: `rails-app/.env.example` → For local development
+**Decision**: Used Rails 8.0.4 instead of Rails 5.0.x mentioned in challenge.
 
-Default values work out of the box. Copy and customize if needed:
-```bash
-cp .env.example .env                    # Docker
-cp rails-app/.env.example rails-app/.env  # Local dev
-```
+**Rationale**:
+- Rails 5.0.x reached EOL in 2018, no longer receives security patches
+- Rails 7+ includes built-in `ActiveRecord::Encryption` (no additional gems needed)
+- Modern tooling: Hotwire, importmaps, better asset pipeline
+- Security and maintainability prioritized over legacy compatibility
+
+### Other Assumptions
+
+- Docker Compose used for development (production-ready setup)
+- SSN masking in presentation layer (Rails) vs service layer (Java)
+- Monorepo structure for easier coordination between services
+- Focus on security over performance (encryption overhead acceptable)
+
+---
+
+## ⏱️ Time Breakdown
+
+**Total**: ~20-24 hours over 3 days
+
+### Technical Setup & Infrastructure (~5 hours)
+- Repository setup, monorepo structure
+- Java microservice (Spring Boot, Maven, DTOs)
+- Rails 8 setup (RSpec, PostgreSQL, encryption config)
+- Docker Compose (Dockerfiles, health checks, networking)
+
+### Core Functional Development (~6 hours)
+- Database schema and Person model with encryption
+- PII collection form (validations, styling, error handling)
+- Display pages with SSN masking
+- Rails ↔ Java integration (HTTP client, error handling)
+
+### Testing & Quality Assurance (~4 hours)
+- RSpec test suite (models, requests, services, components)
+- Java tests (JUnit 5, SSN validation logic, API tests)
+- Achieving 99.63% coverage in Rails, >70% in Java
+- Edge case testing and debugging
+
+### Bonus Features (~5 hours)
+- CI/CD pipeline (GitHub Actions workflows)
+- Frontend modernization (Hotwire, ViewComponents, Stimulus)
+- Audit logging implementation
+- Rate limiting (Java service)
+- Responsive design
+
+### Documentation (~3 hours)
+- README.md (setup, testing, assumptions)
+- ARCHITECTURE.md (system design, security details)
+- .env.example files
+
+### Refinement & Polish (~1-2 hours)
+- Code review and refactoring
+- Bug fixes (Docker issues, integration problems)
+- UI/UX improvements
 
 ---
 
@@ -226,47 +229,3 @@ cp rails-app/.env.example rails-app/.env  # Local dev
 - Integration strategy (Rails ↔ Java)
 - Code review and quality assurance
 - Final testing and verification
-
-**Methodology**: Small, focused PRs with tests for each feature (23 PRs total).
-
----
-
-## 📋 Key Decisions
-
-### Rails 8 vs Rails 5.0.x
-**Decision**: Used Rails 8.0.2 instead of Rails 5.0.x mentioned in challenge.
-
-**Rationale**:
-- Rails 5.0.x reached EOL in 2020 (no security patches)
-- Rails 7+ has built-in `ActiveRecord::Encryption` (no need for attr_encrypted gem)
-- Better security, modern tooling, improved developer experience
-- Demonstrates ability to make informed technical decisions
-
----
-
-## 📚 Additional Resources
-
-- [CHALLENGE.md](CHALLENGE.md) - Original challenge requirements
-- [ARCHITECTURE.md](ARCHITECTURE.md) - Detailed system design (651 lines)
-- [.cursorrules](.cursorrules) - Development guidelines and checklist
-
----
-
-## 📝 License
-
-Private - For evaluation purposes only.
-
----
-
-## 👤 Author
-
-Built by Jaime as a take-home engineering challenge demonstrating:
-- Secure PII handling with encryption and masking
-- Microservices architecture (Rails + Java)
-- Test-driven development (99.63% coverage)
-- Modern Rails patterns (Hotwire, ViewComponents, Presenters)
-- Production-ready code quality
-
----
-
-**Status**: ✅ Ready for submission and demo
