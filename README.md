@@ -14,7 +14,6 @@ A secure Rails 8 + Java microservices application for managing Personal Identifi
 - ✅ SSN masking in display (`***-**-1234`)
 - ✅ Full CRUD with audit logging
 - ✅ Responsive design with Hotwire/Turbo
-- ✅ 99.63% test coverage
 
 **Tech Stack**: Rails 8.0, Java 17, Spring Boot 3.2, PostgreSQL, Tailwind CSS, Stimulus, ViewComponents
 
@@ -162,7 +161,7 @@ Per SSA standards:
 
 ### Other Assumptions
 
-- Docker Compose used for development (production-ready setup)
+- Docker Compose used for development
 - SSN masking in presentation layer (Rails) vs service layer (Java)
 - Monorepo structure for easier coordination between services
 - Focus on security over performance (encryption overhead acceptable)
